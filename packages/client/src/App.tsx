@@ -1,15 +1,45 @@
-import { useComponentValue, useRows } from "@latticexyz/react";
+import { useRows } from "@latticexyz/react";
 import { useMUD } from "./MUDContext";
+import {
+  Network,
+  Alchemy,
+  GetNftsForOwnerOptions,
+  OwnedNft,
+} from "alchemy-sdk";
+import { useState } from "react";
 
 export const App = () => {
+  const settings = {
+    apiKey: import.meta.env.VITE_ALCHEMY_APY_KEY, // Replace with your Alchemy API Key.
+    network: Network.ETH_MAINNET, // Replace with your network.
+  };
+
+  const alchemy = new Alchemy(settings);
+
+  const [userAddress, setUserAddress] = useState(
+    "0x4D33B9C8A02EC9a892C98aA9561A3e743dF1FEA3"
+  );
+  const [userNFTs, setUserNFTs] = useState([] as OwnedNft[]);
+
   const {
-    components: { Counter },
-    systemCalls: { increment, claimLand },
-    network: { singletonEntity, storeCache },
+    systemCalls: { claimLand },
+    network: { storeCache },
   } = useMUD();
 
-  const counter = useComponentValue(Counter, singletonEntity);
   const mapLands = useRows(storeCache, { table: "MapLand" });
+
+  const loadPlayerNft = async (playerAddress: string) => {
+    console.log("LOADING Player ", playerAddress);
+    const options: GetNftsForOwnerOptions = {
+      contractAddresses: ["0xef1a89cbfabe59397ffda11fc5df293e9bc5db90"],
+    };
+    const nftsForOwner = await alchemy.nft.getNftsForOwner(
+      playerAddress,
+      options
+    );
+    console.log(nftsForOwner.ownedNfts);
+    setUserNFTs(nftsForOwner.ownedNfts);
+  };
 
   const board = [
     [
@@ -97,7 +127,26 @@ export const App = () => {
           </div>
         ))}
       </div>
-
+      <br />
+      Play As{" "}
+      <input
+        name="playAsInput"
+        value={userAddress}
+        onChange={(evt) => setUserAddress(evt.target.value)}
+      />
+      <button
+        type="button"
+        onClick={async (event) => {
+          event.preventDefault();
+          loadPlayerNft(userAddress);
+        }}
+      >
+        Play
+      </button>
+      <br />
+      {userNFTs.map((nft) => (
+        <img src={nft.media[0].thumbnail} />
+      ))}
       <br />
       <button
         type="button"
