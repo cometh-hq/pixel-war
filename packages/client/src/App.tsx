@@ -103,11 +103,11 @@ export const App = () => {
         type="button"
         onClick={async (event) => {
           event.preventDefault();
-          await claimLand(1, 2, "6427");
+          await claimLand(1, 4, "6428");
           console.log("claim land 1 2 6427");
         }}
       >
-        claim land 1 2 6427
+        claim land 1 3 6428
       </button>
       <br />
       <>

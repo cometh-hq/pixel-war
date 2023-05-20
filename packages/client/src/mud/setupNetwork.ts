@@ -30,11 +30,15 @@ export async function setupNetwork() {
     worldAbi: IWorld__factory.abi,
   });
 
-  const provider = new providers.Web3Provider((window as any).ethereum);
-  await provider.send("eth_requestAccounts", []);
+  const provider = result.network.providers.get().json;
+
+  //const provider = new providers.Web3Provider((window as any).ethereum);
+  // await provider.send("eth_requestAccounts", []);
 
   // Request drip from faucet
-  const signer = provider.getSigner();
+  //const signer = provider.getSigner();
+  const signer = result.network.signer.get();
+
   if (networkConfig.faucetServiceUrl && signer) {
     const address = await signer.getAddress();
     console.info("[Dev Faucet]: Player address -> ", address);
