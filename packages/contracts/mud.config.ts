@@ -11,7 +11,10 @@ export default mudConfig({
         x: "uint32",
         y: "uint32",
       },
-      schema: "uint256",
+      schema: {
+        tokenAddress: "address",
+        tokenId: "uint256",
+      },
     },
   },
 });

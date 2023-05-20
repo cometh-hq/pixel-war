@@ -103,7 +103,12 @@ export const App = () => {
         type="button"
         onClick={async (event) => {
           event.preventDefault();
-          await claimLand(1, 4, "6428");
+          await claimLand(
+            1,
+            4,
+            "0xef1a89cbfabe59397ffda11fc5df293e9bc5db90",
+            "6428"
+          );
           console.log("claim land 1 2 6427");
         }}
       >
@@ -113,7 +118,9 @@ export const App = () => {
       <>
         {mapLands.map((mapLand) => (
           <p>
-            {mapLand.key.x} {mapLand.key.y} {mapLand.value.value.toString()}
+            {mapLand.key.x} {mapLand.key.y} -
+            {mapLand.value.tokenAddress.toString()} -
+            {mapLand.value.tokenId.toString()} -
           </p>
         ))}
       </>

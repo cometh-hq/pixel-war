@@ -20,11 +20,17 @@ import { PackedCounter, PackedCounterLib } from "@latticexyz/store/src/PackedCou
 bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("MapLand")));
 bytes32 constant MapLandTableId = _tableId;
 
+struct MapLandData {
+  address tokenAddress;
+  uint256 tokenId;
+}
+
 library MapLand {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](1);
-    _schema[0] = SchemaType.UINT256;
+    SchemaType[] memory _schema = new SchemaType[](2);
+    _schema[0] = SchemaType.ADDRESS;
+    _schema[1] = SchemaType.UINT256;
 
     return SchemaLib.encode(_schema);
   }
@@ -39,8 +45,9 @@ library MapLand {
 
   /** Get the table's metadata */
   function getMetadata() internal pure returns (string memory, string[] memory) {
-    string[] memory _fieldNames = new string[](1);
-    _fieldNames[0] = "value";
+    string[] memory _fieldNames = new string[](2);
+    _fieldNames[0] = "tokenAddress";
+    _fieldNames[1] = "tokenId";
     return ("MapLand", _fieldNames);
   }
 
@@ -66,47 +73,144 @@ library MapLand {
     _store.setMetadata(_tableId, _tableName, _fieldNames);
   }
 
-  /** Get value */
-  function get(uint32 x, uint32 y) internal view returns (uint256 value) {
+  /** Get tokenAddress */
+  function getTokenAddress(uint32 x, uint32 y) internal view returns (address tokenAddress) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
-    return (uint256(Bytes.slice32(_blob, 0)));
+    return (address(Bytes.slice20(_blob, 0)));
   }
 
-  /** Get value (using the specified store) */
-  function get(IStore _store, uint32 x, uint32 y) internal view returns (uint256 value) {
+  /** Get tokenAddress (using the specified store) */
+  function getTokenAddress(IStore _store, uint32 x, uint32 y) internal view returns (address tokenAddress) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
+    return (address(Bytes.slice20(_blob, 0)));
+  }
+
+  /** Set tokenAddress */
+  function setTokenAddress(uint32 x, uint32 y, address tokenAddress) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = bytes32(uint256((x)));
+    _keyTuple[1] = bytes32(uint256((y)));
+
+    StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked((tokenAddress)));
+  }
+
+  /** Set tokenAddress (using the specified store) */
+  function setTokenAddress(IStore _store, uint32 x, uint32 y, address tokenAddress) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = bytes32(uint256((x)));
+    _keyTuple[1] = bytes32(uint256((y)));
+
+    _store.setField(_tableId, _keyTuple, 0, abi.encodePacked((tokenAddress)));
+  }
+
+  /** Get tokenId */
+  function getTokenId(uint32 x, uint32 y) internal view returns (uint256 tokenId) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = bytes32(uint256((x)));
+    _keyTuple[1] = bytes32(uint256((y)));
+
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 1);
     return (uint256(Bytes.slice32(_blob, 0)));
   }
 
-  /** Set value */
-  function set(uint32 x, uint32 y, uint256 value) internal {
+  /** Get tokenId (using the specified store) */
+  function getTokenId(IStore _store, uint32 x, uint32 y) internal view returns (uint256 tokenId) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
 
-    StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked((value)));
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 1);
+    return (uint256(Bytes.slice32(_blob, 0)));
   }
 
-  /** Set value (using the specified store) */
-  function set(IStore _store, uint32 x, uint32 y, uint256 value) internal {
+  /** Set tokenId */
+  function setTokenId(uint32 x, uint32 y, uint256 tokenId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
 
-    _store.setField(_tableId, _keyTuple, 0, abi.encodePacked((value)));
+    StoreSwitch.setField(_tableId, _keyTuple, 1, abi.encodePacked((tokenId)));
+  }
+
+  /** Set tokenId (using the specified store) */
+  function setTokenId(IStore _store, uint32 x, uint32 y, uint256 tokenId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = bytes32(uint256((x)));
+    _keyTuple[1] = bytes32(uint256((y)));
+
+    _store.setField(_tableId, _keyTuple, 1, abi.encodePacked((tokenId)));
+  }
+
+  /** Get the full data */
+  function get(uint32 x, uint32 y) internal view returns (MapLandData memory _table) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = bytes32(uint256((x)));
+    _keyTuple[1] = bytes32(uint256((y)));
+
+    bytes memory _blob = StoreSwitch.getRecord(_tableId, _keyTuple, getSchema());
+    return decode(_blob);
+  }
+
+  /** Get the full data (using the specified store) */
+  function get(IStore _store, uint32 x, uint32 y) internal view returns (MapLandData memory _table) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = bytes32(uint256((x)));
+    _keyTuple[1] = bytes32(uint256((y)));
+
+    bytes memory _blob = _store.getRecord(_tableId, _keyTuple, getSchema());
+    return decode(_blob);
+  }
+
+  /** Set the full data using individual values */
+  function set(uint32 x, uint32 y, address tokenAddress, uint256 tokenId) internal {
+    bytes memory _data = encode(tokenAddress, tokenId);
+
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = bytes32(uint256((x)));
+    _keyTuple[1] = bytes32(uint256((y)));
+
+    StoreSwitch.setRecord(_tableId, _keyTuple, _data);
+  }
+
+  /** Set the full data using individual values (using the specified store) */
+  function set(IStore _store, uint32 x, uint32 y, address tokenAddress, uint256 tokenId) internal {
+    bytes memory _data = encode(tokenAddress, tokenId);
+
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = bytes32(uint256((x)));
+    _keyTuple[1] = bytes32(uint256((y)));
+
+    _store.setRecord(_tableId, _keyTuple, _data);
+  }
+
+  /** Set the full data using the data struct */
+  function set(uint32 x, uint32 y, MapLandData memory _table) internal {
+    set(x, y, _table.tokenAddress, _table.tokenId);
+  }
+
+  /** Set the full data using the data struct (using the specified store) */
+  function set(IStore _store, uint32 x, uint32 y, MapLandData memory _table) internal {
+    set(_store, x, y, _table.tokenAddress, _table.tokenId);
+  }
+
+  /** Decode the tightly packed blob using this table's schema */
+  function decode(bytes memory _blob) internal pure returns (MapLandData memory _table) {
+    _table.tokenAddress = (address(Bytes.slice20(_blob, 0)));
+
+    _table.tokenId = (uint256(Bytes.slice32(_blob, 20)));
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(uint256 value) internal view returns (bytes memory) {
-    return abi.encodePacked(value);
+  function encode(address tokenAddress, uint256 tokenId) internal view returns (bytes memory) {
+    return abi.encodePacked(tokenAddress, tokenId);
   }
 
   /** Encode keys as a bytes32 array using this table's schema */
