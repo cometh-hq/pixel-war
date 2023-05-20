@@ -1,4 +1,4 @@
-import { useRows } from "@latticexyz/react";
+import { useComponentValue, useRows, useRow } from "@latticexyz/react";
 import { useMUD } from "./MUDContext";
 import {
   Network,
@@ -15,11 +15,13 @@ export const App = () => {
   };
 
   const alchemy = new Alchemy(settings);
-
   const [userAddress, setUserAddress] = useState(
     "0x4D33B9C8A02EC9a892C98aA9561A3e743dF1FEA3"
   );
+
   const [userNFTs, setUserNFTs] = useState([] as OwnedNft[]);
+
+  const [board, setBoard] = useState([] as any);
 
   const {
     systemCalls: { claimLand },
@@ -41,88 +43,59 @@ export const App = () => {
     setUserNFTs(nftsForOwner.ownedNfts);
   };
 
-  const board = [
-    [
-      "https://i.seadn.io/gae/d-4SFBsv8GuWksh-AVEln50f-1mFWxbsNYxQJ6GUSG7E7Cb4iyKiHtVSGI54cxy1ZfbfFkBB8WoARPhJKbgdtDd7JfYQTT_vG2Ylkg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/Q1b5sc8ZMYJ_9XDnVS6U17q69RRXzJyaVMhr1W-jZ1v6g0lYo7lFkZ_CDum6KplN4MlZlzxDYDZ3oTcTipXu2gv9Nhf7UPpVXLZ0akE?auto=format&dpr=1&w=750",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://i.seadn.io/gae/o1kjRP-MajEW62NhSh0wSLO_ghONB9Ek5zbTOX2bLIJuGmL_LqksYP2gOTkqMgDhjQXT6-g17kkVqUcXk3r_RxVtP4Qvgm-no8M7Lg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/to2PmUZ_9YhGO_4c_Q5Rn7v6Gdivt4uDbYZRAcJR6OsZaz_Lh4DeXzkM29_LPC8d3W1l0mHxb9m8xMtzGwPp9WOVagYfHiBFWtw5PA?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/d-4SFBsv8GuWksh-AVEln50f-1mFWxbsNYxQJ6GUSG7E7Cb4iyKiHtVSGI54cxy1ZfbfFkBB8WoARPhJKbgdtDd7JfYQTT_vG2Ylkg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/Q1b5sc8ZMYJ_9XDnVS6U17q69RRXzJyaVMhr1W-jZ1v6g0lYo7lFkZ_CDum6KplN4MlZlzxDYDZ3oTcTipXu2gv9Nhf7UPpVXLZ0akE?auto=format&dpr=1&w=750",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://i.seadn.io/gae/o1kjRP-MajEW62NhSh0wSLO_ghONB9Ek5zbTOX2bLIJuGmL_LqksYP2gOTkqMgDhjQXT6-g17kkVqUcXk3r_RxVtP4Qvgm-no8M7Lg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/to2PmUZ_9YhGO_4c_Q5Rn7v6Gdivt4uDbYZRAcJR6OsZaz_Lh4DeXzkM29_LPC8d3W1l0mHxb9m8xMtzGwPp9WOVagYfHiBFWtw5PA?auto=format&dpr=1&w=750",
-    ],
-    [
-      "https://i.seadn.io/gae/d-4SFBsv8GuWksh-AVEln50f-1mFWxbsNYxQJ6GUSG7E7Cb4iyKiHtVSGI54cxy1ZfbfFkBB8WoARPhJKbgdtDd7JfYQTT_vG2Ylkg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/Q1b5sc8ZMYJ_9XDnVS6U17q69RRXzJyaVMhr1W-jZ1v6g0lYo7lFkZ_CDum6KplN4MlZlzxDYDZ3oTcTipXu2gv9Nhf7UPpVXLZ0akE?auto=format&dpr=1&w=750",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://i.seadn.io/gae/o1kjRP-MajEW62NhSh0wSLO_ghONB9Ek5zbTOX2bLIJuGmL_LqksYP2gOTkqMgDhjQXT6-g17kkVqUcXk3r_RxVtP4Qvgm-no8M7Lg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/to2PmUZ_9YhGO_4c_Q5Rn7v6Gdivt4uDbYZRAcJR6OsZaz_Lh4DeXzkM29_LPC8d3W1l0mHxb9m8xMtzGwPp9WOVagYfHiBFWtw5PA?auto=format&dpr=1&w=750",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://i.seadn.io/gae/o1kjRP-MajEW62NhSh0wSLO_ghONB9Ek5zbTOX2bLIJuGmL_LqksYP2gOTkqMgDhjQXT6-g17kkVqUcXk3r_RxVtP4Qvgm-no8M7Lg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/to2PmUZ_9YhGO_4c_Q5Rn7v6Gdivt4uDbYZRAcJR6OsZaz_Lh4DeXzkM29_LPC8d3W1l0mHxb9m8xMtzGwPp9WOVagYfHiBFWtw5PA?auto=format&dpr=1&w=750",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://i.seadn.io/gae/o1kjRP-MajEW62NhSh0wSLO_ghONB9Ek5zbTOX2bLIJuGmL_LqksYP2gOTkqMgDhjQXT6-g17kkVqUcXk3r_RxVtP4Qvgm-no8M7Lg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/to2PmUZ_9YhGO_4c_Q5Rn7v6Gdivt4uDbYZRAcJR6OsZaz_Lh4DeXzkM29_LPC8d3W1l0mHxb9m8xMtzGwPp9WOVagYfHiBFWtw5PA?auto=format&dpr=1&w=750",
-    ],
-    [
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://i.seadn.io/gae/o1kjRP-MajEW62NhSh0wSLO_ghONB9Ek5zbTOX2bLIJuGmL_LqksYP2gOTkqMgDhjQXT6-g17kkVqUcXk3r_RxVtP4Qvgm-no8M7Lg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/to2PmUZ_9YhGO_4c_Q5Rn7v6Gdivt4uDbYZRAcJR6OsZaz_Lh4DeXzkM29_LPC8d3W1l0mHxb9m8xMtzGwPp9WOVagYfHiBFWtw5PA?auto=format&dpr=1&w=750",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://i.seadn.io/gae/o1kjRP-MajEW62NhSh0wSLO_ghONB9Ek5zbTOX2bLIJuGmL_LqksYP2gOTkqMgDhjQXT6-g17kkVqUcXk3r_RxVtP4Qvgm-no8M7Lg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/to2PmUZ_9YhGO_4c_Q5Rn7v6Gdivt4uDbYZRAcJR6OsZaz_Lh4DeXzkM29_LPC8d3W1l0mHxb9m8xMtzGwPp9WOVagYfHiBFWtw5PA?auto=format&dpr=1&w=750",
-    ],
-    [
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://i.seadn.io/gae/o1kjRP-MajEW62NhSh0wSLO_ghONB9Ek5zbTOX2bLIJuGmL_LqksYP2gOTkqMgDhjQXT6-g17kkVqUcXk3r_RxVtP4Qvgm-no8M7Lg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/to2PmUZ_9YhGO_4c_Q5Rn7v6Gdivt4uDbYZRAcJR6OsZaz_Lh4DeXzkM29_LPC8d3W1l0mHxb9m8xMtzGwPp9WOVagYfHiBFWtw5PA?auto=format&dpr=1&w=750",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://i.seadn.io/gae/o1kjRP-MajEW62NhSh0wSLO_ghONB9Ek5zbTOX2bLIJuGmL_LqksYP2gOTkqMgDhjQXT6-g17kkVqUcXk3r_RxVtP4Qvgm-no8M7Lg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/to2PmUZ_9YhGO_4c_Q5Rn7v6Gdivt4uDbYZRAcJR6OsZaz_Lh4DeXzkM29_LPC8d3W1l0mHxb9m8xMtzGwPp9WOVagYfHiBFWtw5PA?auto=format&dpr=1&w=750",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://i.seadn.io/gae/o1kjRP-MajEW62NhSh0wSLO_ghONB9Ek5zbTOX2bLIJuGmL_LqksYP2gOTkqMgDhjQXT6-g17kkVqUcXk3r_RxVtP4Qvgm-no8M7Lg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/to2PmUZ_9YhGO_4c_Q5Rn7v6Gdivt4uDbYZRAcJR6OsZaz_Lh4DeXzkM29_LPC8d3W1l0mHxb9m8xMtzGwPp9WOVagYfHiBFWtw5PA?auto=format&dpr=1&w=750",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://i.seadn.io/gae/o1kjRP-MajEW62NhSh0wSLO_ghONB9Ek5zbTOX2bLIJuGmL_LqksYP2gOTkqMgDhjQXT6-g17kkVqUcXk3r_RxVtP4Qvgm-no8M7Lg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/to2PmUZ_9YhGO_4c_Q5Rn7v6Gdivt4uDbYZRAcJR6OsZaz_Lh4DeXzkM29_LPC8d3W1l0mHxb9m8xMtzGwPp9WOVagYfHiBFWtw5PA?auto=format&dpr=1&w=750",
-    ],
-    [
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://i.seadn.io/gae/o1kjRP-MajEW62NhSh0wSLO_ghONB9Ek5zbTOX2bLIJuGmL_LqksYP2gOTkqMgDhjQXT6-g17kkVqUcXk3r_RxVtP4Qvgm-no8M7Lg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/to2PmUZ_9YhGO_4c_Q5Rn7v6Gdivt4uDbYZRAcJR6OsZaz_Lh4DeXzkM29_LPC8d3W1l0mHxb9m8xMtzGwPp9WOVagYfHiBFWtw5PA?auto=format&dpr=1&w=750",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://cdn-icons-png.flaticon.com/512/4211/4211763.png",
-      "https://i.seadn.io/gae/o1kjRP-MajEW62NhSh0wSLO_ghONB9Ek5zbTOX2bLIJuGmL_LqksYP2gOTkqMgDhjQXT6-g17kkVqUcXk3r_RxVtP4Qvgm-no8M7Lg?auto=format&dpr=1&w=750",
-      "https://i.seadn.io/gae/to2PmUZ_9YhGO_4c_Q5Rn7v6Gdivt4uDbYZRAcJR6OsZaz_Lh4DeXzkM29_LPC8d3W1l0mHxb9m8xMtzGwPp9WOVagYfHiBFWtw5PA?auto=format&dpr=1&w=750",
-    ],
-  ];
+  const emptyBoard: any = [];
+  for (var i = 0; i < 5; i++) {
+    emptyBoard[i] = new Array(5);
+    for (var j = 0; j < 5; j++) {
+      emptyBoard[i][j] =
+        "https://cdn-icons-png.flaticon.com/512/4211/4211763.png";
+    }
+  }
+
+  const initData = async (): Promise<any> => {
+    const mapLands = await useRows(storeCache, { table: "MapLand" });
+    mapLands.forEach(function (mapLand) {
+      console.log(mapLand.key.x, mapLand.key.y);
+      emptyBoard[mapLand.key.x][mapLand.key.y] =
+        "https://gateway.ipfs.io/ipfs/bafybeihlond74ij2vbzyuagma2uxtv2b7e4nmty6ujxbapqopsarzy3yo4/" +
+        mapLand.value.tokenId.toString() +
+        ".png";
+    });
+    setBoard(emptyBoard);
+  };
+
+  initData();
 
   return (
     <>
       <div>
         {board.map((row, i) => (
           <div key={i}>
-            {row.map((col, j) => (
-              <span key={j}>
-                <img style={{ padding: "4px" }} width={33} src={col} />
-              </span>
+            {row.map((col: any, j: any) => (
+              <button
+                type="button"
+                onClick={async (event) => {
+                  event.preventDefault();
+                  await claimLand(
+                    i,
+                    j,
+                    "0xef1a89cbfabe59397ffda11fc5df293e9bc5db90",
+                    "1049"
+                  );
+                  console.log(
+                    "claim land %%%%",
+                    i,
+                    j,
+                    "0xef1a89cbfabe59397ffda11fc5df293e9bc5db90",
+                    1049
+                  );
+                }}
+              >
+                claim land {i} {j}
+                <span>
+                  <img style={{ padding: "4px" }} width={33} src={col} />
+                </span>
+              </button>
             ))}
           </div>
         ))}
@@ -148,21 +121,6 @@ export const App = () => {
         <img src={nft.media[0].thumbnail} />
       ))}
       <br />
-      <button
-        type="button"
-        onClick={async (event) => {
-          event.preventDefault();
-          await claimLand(
-            1,
-            4,
-            "0xef1a89cbfabe59397ffda11fc5df293e9bc5db90",
-            "6428"
-          );
-          console.log("claim land 1 2 6427");
-        }}
-      >
-        claim land 1 3 6428
-      </button>
       <br />
       <>
         {mapLands.map((mapLand) => (
@@ -171,6 +129,13 @@ export const App = () => {
             {mapLand.value.tokenAddress.toString()} -
             {mapLand.value.tokenId.toString()} -
           </p>
+        ))}
+      </>
+      <br />
+      <br />
+      <>
+        {board.map((row) => (
+          <p>{row}</p>
         ))}
       </>
     </>
