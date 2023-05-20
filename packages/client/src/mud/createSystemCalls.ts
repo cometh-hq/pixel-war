@@ -15,7 +15,13 @@ export function createSystemCalls(
     return getComponentValue(Counter, singletonEntity);
   };
 
+  const claimLand = async (x: number, y: number, tokenId: string) => {
+    const tx = await worldSend("claim", [x, y, tokenId]);
+    await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash);
+  };
+
   return {
     increment,
+    claimLand,
   };
 }

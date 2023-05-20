@@ -6,5 +6,12 @@ export default mudConfig({
       keySchema: {},
       schema: "uint32",
     },
+    MapLand: {
+      keySchema: {
+        x: "uint32",
+        y: "uint32",
+      },
+      schema: "uint256",
+    },
   },
 });
