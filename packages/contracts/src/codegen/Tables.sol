@@ -5,3 +5,4 @@ pragma solidity >=0.8.0;
 
 import { Counter, CounterTableId } from "./tables/Counter.sol";
 import { MapLand, MapLandData, MapLandTableId } from "./tables/MapLand.sol";
+import { NftPosition, NftPositionData, NftPositionTableId } from "./tables/NftPosition.sol";

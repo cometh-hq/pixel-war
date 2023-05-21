@@ -37,5 +37,22 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    NftPosition: (() => {
+      const tableId = new TableId("", "NftPosition");
+      return defineComponent(
+        world,
+        {
+          x: RecsType.Number,
+          y: RecsType.Number,
+          landedDate: RecsType.BigInt,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
   };
 }

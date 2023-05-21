@@ -17,5 +17,16 @@ export default mudConfig({
         image: "string",
       },
     },
+    NftPosition: {
+      keySchema: {
+        tokenAddress: "address",
+        tokenId: "uint256",
+      },
+      schema: {
+        x: "uint32",
+        y: "uint32",
+        landedDate: "uint256",
+      },
+    },
   },
 });
