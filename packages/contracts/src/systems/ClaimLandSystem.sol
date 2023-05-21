@@ -8,9 +8,9 @@ contract ClaimLandSystem is System {
   function claim(uint32 x, uint32 y, address tokenAddress, uint256 tokenId, string memory image ) public {
 
     NftPositionData memory playedNftPosition = NftPosition.get(tokenAddress, tokenId);
-    if (playedNftPosition.landedDate != 0) {
-      MapLand.set(playedNftPosition.x, playedNftPosition.y, MapLandData({tokenAddress: address(0) , tokenId: 0, image:"" }));
-    }
+
+    uint256 timeDiff = block.timestamp - playedNftPosition.landedDate;
+    require(timeDiff >= 60, "Nft claimed less than one minute ago");
 
 
     MapLandData memory mapLand = MapLand.get(x, y);
