@@ -1,3 +1,7 @@
+.container {
+  font-family: "poppins";
+}
+
 .modal-overlay {
   z-index: 9999;
   width: 100vw;
@@ -17,4 +21,50 @@
   height: 70%;
   padding: 1rem;
   border-radius: 1rem;
+}
+
+.connectWallet {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.connectButton {
+  font-family: "poppins";
+  border-radius: 10px;
+  background-color: #008000;
+  color: white;
+  padding: 10px;
+  margin: 10px;
+}
+
+.connectButton:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.disconnectButton {
+  font-family: "poppins";
+  border-radius: 10px;
+  background-color: #bc4749;
+  color: white;
+  padding: 10px;
+}
+
+.disconnectButton:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.button {
+  justify-content: center;
+  align-items: center;
 }
