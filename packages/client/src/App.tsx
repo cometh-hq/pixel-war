@@ -1,4 +1,5 @@
-import { useComponentValue, useRows, useRow } from "@latticexyz/react";
+import { useRows } from "@latticexyz/react";
+import { Type as RecsType } from "@latticexyz/recs";
 import { useMUD } from "./MUDContext";
 import "./styles.css";
 import Modal from "./component/modal";
@@ -12,6 +13,7 @@ import {
   Nft,
 } from "alchemy-sdk";
 import { useState, useEffect } from "react";
+import { ethers } from "ethers";
 
 export const App = () => {
   const settings = {
@@ -24,9 +26,13 @@ export const App = () => {
     "0x4D33B9C8A02EC9a892C98aA9561A3e743dF1FEA3"
   );
 
-  const [userNFTs, setUserNFTs] = useState<OwnedNft[]>([]);
+  type NftWithPosition = OwnedNft & {
+    landedTimestamp: number;
+  };
+
+  const [userNFTs, setUserNFTs] = useState<NftWithPosition[]>([]);
   const [board, setBoard] = useState<any>([]);
-  const [selectedNft, setSelectedNft] = useState<Nft | null>(null);
+  const [selectedNft, setSelectedNft] = useState<NftWithPosition | null>(null);
   const [selectedLand, setSelectedLand] = useState<any>([]);
 
   const {
@@ -45,8 +51,34 @@ export const App = () => {
       playerAddress,
       options
     );
-    console.log(nftsForOwner.ownedNfts);
-    setUserNFTs(nftsForOwner.ownedNfts);
+
+    const nfts = nftsForOwner.ownedNfts.map((nft) => {
+      const nftAddress = ethers.utils.getAddress(nft.contract.address);
+      const nftPosition = storeCache.tables.NftPosition.scan({
+        key: {
+          eq: {
+            tokenAddress: nftAddress,
+            tokenId: BigInt(nft.tokenId),
+          },
+        },
+      });
+
+      let landedTimestamp = 0;
+      if (nftPosition.length > 0) {
+        const position = nftPosition[0];
+        landedTimestamp = parseInt(position.value.landedDate.toString()) * 1000;
+        let playable = new Date().getTime() - landedTimestamp > 60 * 1000;
+        console.log(playable);
+      }
+
+      return {
+        ...nft,
+        landedTimestamp: landedTimestamp,
+      };
+    });
+
+    console.log(nfts);
+    setUserNFTs(nfts);
   };
 
   useEffect(() => {
@@ -70,7 +102,7 @@ export const App = () => {
     setBoard(emptyBoard);
   };
 
-  const claim = async (nft: Nft) => {
+  const claim = async (nft: NftWithPosition) => {
     console.log(selectedLand[0]);
     await claimLand(
       selectedLand[0],
@@ -79,6 +111,7 @@ export const App = () => {
       nft!.tokenId,
       nft!.media[0]?.thumbnail
     );
+    nft.landedTimestamp = new Date().getTime();
   };
 
   const { isOpen, toggle } = useModal();
@@ -91,15 +124,25 @@ export const App = () => {
 
           {userNFTs.map((nft) => (
             <div>
-              <img
-                width={40}
-                onClick={() => {
+              <button
+                type="button"
+                disabled={
+                  new Date().getTime() - nft.landedTimestamp <= 60 * 1000
+                }
+                onClick={async () => {
                   setSelectedNft(nft);
                   claim(nft);
                   toggle();
                 }}
-                src={nft.media[0].thumbnail}
-              />
+              >
+                <span>
+                  <img
+                    style={{ padding: "4px" }}
+                    width={33}
+                    src={nft.media[0].thumbnail}
+                  />
+                </span>
+              </button>
             </div>
           ))}
         </Modal>
