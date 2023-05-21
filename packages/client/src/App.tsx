@@ -1,12 +1,17 @@
 import { useComponentValue, useRows, useRow } from "@latticexyz/react";
 import { useMUD } from "./MUDContext";
+import "./styles.css";
+import Modal from "./component/modal";
+import useModal from "../src/hooks/useModal";
+
 import {
   Network,
   Alchemy,
   GetNftsForOwnerOptions,
   OwnedNft,
+  Nft,
 } from "alchemy-sdk";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const App = () => {
   const settings = {
@@ -19,9 +24,9 @@ export const App = () => {
     "0x4D33B9C8A02EC9a892C98aA9561A3e743dF1FEA3"
   );
 
-  const [userNFTs, setUserNFTs] = useState([] as OwnedNft[]);
-
-  const [board, setBoard] = useState([] as any);
+  const [userNFTs, setUserNFTs] = useState<OwnedNft[]>([]);
+  const [board, setBoard] = useState<any>([]);
+  const [selectedNft, setSelectedNft] = useState<Nft | null>(null);
 
   const {
     systemCalls: { claimLand },
@@ -43,55 +48,82 @@ export const App = () => {
     setUserNFTs(nftsForOwner.ownedNfts);
   };
 
-  const emptyBoard: any = [];
-  for (var i = 0; i < 5; i++) {
-    emptyBoard[i] = new Array(5);
-    for (var j = 0; j < 5; j++) {
-      emptyBoard[i][j] =
-        "https://cdn-icons-png.flaticon.com/512/4211/4211763.png";
-    }
-  }
+  useEffect(() => {
+    initData();
+  }, [mapLands]);
 
-  const initData = async (): Promise<any> => {
-    const mapLands = await useRows(storeCache, { table: "MapLand" });
+  const initData = async (): Promise<void> => {
+    const boardSize = 10;
+    const emptyBoard: any = [];
+    for (var i = 0; i < boardSize; i++) {
+      emptyBoard[i] = new Array(boardSize);
+      for (var j = 0; j < boardSize; j++) {
+        emptyBoard[i][j] =
+          "https://cdn-icons-png.flaticon.com/512/4211/4211763.png";
+      }
+    }
     mapLands.forEach(function (mapLand) {
-      console.log(mapLand.key.x, mapLand.key.y);
-      emptyBoard[mapLand.key.x][mapLand.key.y] =
-        "https://gateway.ipfs.io/ipfs/bafybeihlond74ij2vbzyuagma2uxtv2b7e4nmty6ujxbapqopsarzy3yo4/" +
-        mapLand.value.tokenId.toString() +
-        ".png";
+      emptyBoard[mapLand.key.x][mapLand.key.y] = mapLand.value.image;
     });
+
     setBoard(emptyBoard);
   };
 
-  initData();
+  const handleClaimLand = async (i: number, j: number) => {
+    if (selectedNft === null) {
+      alert("You need to select and nft first to be able to play");
+      return;
+    }
+    await claimLand(
+      i,
+      j,
+      selectedNft!.contract.address,
+      selectedNft!.tokenId,
+      selectedNft!.media[0]?.thumbnail
+    );
+  };
+
+  const { isOpen, toggle } = useModal();
 
   return (
     <>
       <div>
-        {board.map((row, i) => (
+        <Modal isOpen={isOpen} toggle={toggle}>
+          <h2>Select Your Nft</h2>
+          {userNFTs.length === 0 && (
+            <button
+              type="button"
+              onClick={async (event) => {
+                event.preventDefault();
+                loadPlayerNft(userAddress);
+              }}
+            >
+              Load my NFTs
+            </button>
+          )}
+          {userNFTs.map((nft) => (
+            <div>
+              <img
+                onClick={() => {
+                  setSelectedNft(nft);
+                  toggle();
+                }}
+                src={nft.media[0].thumbnail}
+              />
+            </div>
+          ))}
+        </Modal>
+        {board.map((row: any, i: number) => (
           <div key={i}>
-            {row.map((col: any, j: any) => (
+            {row.map((col: string, j: number) => (
               <button
                 type="button"
                 onClick={async (event) => {
                   event.preventDefault();
-                  await claimLand(
-                    i,
-                    j,
-                    "0xef1a89cbfabe59397ffda11fc5df293e9bc5db90",
-                    "1049"
-                  );
-                  console.log(
-                    "claim land %%%%",
-                    i,
-                    j,
-                    "0xef1a89cbfabe59397ffda11fc5df293e9bc5db90",
-                    1049
-                  );
+                  await handleClaimLand(i, j);
                 }}
               >
-                claim land {i} {j}
+                {i} {j}
                 <span>
                   <img style={{ padding: "4px" }} width={33} src={col} />
                 </span>
@@ -117,10 +149,14 @@ export const App = () => {
         Play
       </button>
       <br />
-      {userNFTs.map((nft) => (
-        <img src={nft.media[0].thumbnail} />
-      ))}
       <br />
+      <button onClick={toggle}>Open Modal to select NFT </button>
+      <p>SelectedNFT:</p>
+      {selectedNft ? (
+        <img src={selectedNft.media[0].thumbnail} />
+      ) : (
+        "no NFT selected for now"
+      )}
       <br />
       <>
         {mapLands.map((mapLand) => (
@@ -134,7 +170,7 @@ export const App = () => {
       <br />
       <br />
       <>
-        {board.map((row) => (
+        {board.map((row: any) => (
           <p>{row}</p>
         ))}
       </>
