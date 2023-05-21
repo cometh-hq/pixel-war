@@ -27,6 +27,7 @@ export const App = () => {
   const [userNFTs, setUserNFTs] = useState<OwnedNft[]>([]);
   const [board, setBoard] = useState<any>([]);
   const [selectedNft, setSelectedNft] = useState<Nft | null>(null);
+  const [selectedLand, setSelectedLand] = useState<any>([]);
 
   const {
     systemCalls: { claimLand },
@@ -69,17 +70,14 @@ export const App = () => {
     setBoard(emptyBoard);
   };
 
-  const handleClaimLand = async (i: number, j: number) => {
-    if (selectedNft === null) {
-      alert("You need to select and nft first to be able to play");
-      return;
-    }
+  const claim = async (nft: Nft) => {
+    console.log(selectedLand[0]);
     await claimLand(
-      i,
-      j,
-      selectedNft!.contract.address,
-      selectedNft!.tokenId,
-      selectedNft!.media[0]?.thumbnail
+      selectedLand[0],
+      selectedLand[1],
+      nft!.contract.address,
+      nft!.tokenId,
+      nft!.media[0]?.thumbnail
     );
   };
 
@@ -90,22 +88,14 @@ export const App = () => {
       <div>
         <Modal isOpen={isOpen} toggle={toggle}>
           <h2>Select Your Nft</h2>
-          {userNFTs.length === 0 && (
-            <button
-              type="button"
-              onClick={async (event) => {
-                event.preventDefault();
-                loadPlayerNft(userAddress);
-              }}
-            >
-              Load my NFTs
-            </button>
-          )}
+
           {userNFTs.map((nft) => (
             <div>
               <img
+                width={40}
                 onClick={() => {
                   setSelectedNft(nft);
+                  claim(nft);
                   toggle();
                 }}
                 src={nft.media[0].thumbnail}
@@ -113,6 +103,24 @@ export const App = () => {
             </div>
           ))}
         </Modal>
+        Play As{" "}
+        <input
+          name="playAsInput"
+          value={userAddress}
+          onChange={(evt) => setUserAddress(evt.target.value)}
+        />
+        <button
+          type="button"
+          onClick={async (event) => {
+            event.preventDefault();
+            loadPlayerNft(userAddress);
+          }}
+        >
+          Play
+        </button>
+        <br />
+        <br />
+        <br />
         {board.map((row: any, i: number) => (
           <div key={i}>
             {row.map((col: string, j: number) => (
@@ -120,7 +128,8 @@ export const App = () => {
                 type="button"
                 onClick={async (event) => {
                   event.preventDefault();
-                  await handleClaimLand(i, j);
+                  setSelectedLand([i, j]);
+                  toggle();
                 }}
               >
                 {i} {j}
@@ -133,47 +142,6 @@ export const App = () => {
         ))}
       </div>
       <br />
-      Play As{" "}
-      <input
-        name="playAsInput"
-        value={userAddress}
-        onChange={(evt) => setUserAddress(evt.target.value)}
-      />
-      <button
-        type="button"
-        onClick={async (event) => {
-          event.preventDefault();
-          loadPlayerNft(userAddress);
-        }}
-      >
-        Play
-      </button>
-      <br />
-      <br />
-      <button onClick={toggle}>Open Modal to select NFT </button>
-      <p>SelectedNFT:</p>
-      {selectedNft ? (
-        <img src={selectedNft.media[0].thumbnail} />
-      ) : (
-        "no NFT selected for now"
-      )}
-      <br />
-      <>
-        {mapLands.map((mapLand) => (
-          <p>
-            {mapLand.key.x} {mapLand.key.y} -
-            {mapLand.value.tokenAddress.toString()} -
-            {mapLand.value.tokenId.toString()} -
-          </p>
-        ))}
-      </>
-      <br />
-      <br />
-      <>
-        {board.map((row: any) => (
-          <p>{row}</p>
-        ))}
-      </>
     </>
   );
 };
