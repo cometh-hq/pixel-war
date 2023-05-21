@@ -55,7 +55,7 @@ export const App = () => {
   const initData = async (): Promise<void> => {
     const boardSize = 10;
     const emptyBoard: any = [];
-    for (var i = 0; i < 5; i++) {
+    for (var i = 0; i < boardSize; i++) {
       emptyBoard[i] = new Array(boardSize);
       for (var j = 0; j < boardSize; j++) {
         emptyBoard[i][j] =
@@ -63,10 +63,7 @@ export const App = () => {
       }
     }
     mapLands.forEach(function (mapLand) {
-      emptyBoard[mapLand.key.x][mapLand.key.y] =
-        "https://gateway.ipfs.io/ipfs/bafybeihlond74ij2vbzyuagma2uxtv2b7e4nmty6ujxbapqopsarzy3yo4/" +
-        mapLand.value.tokenId.toString() +
-        ".png";
+      emptyBoard[mapLand.key.x][mapLand.key.y] = mapLand.value.image;
     });
 
     setBoard(emptyBoard);
@@ -77,7 +74,13 @@ export const App = () => {
       alert("You need to select and nft first to be able to play");
       return;
     }
-    await claimLand(i, j, selectedNft!.contract.address, selectedNft!.tokenId);
+    await claimLand(
+      i,
+      j,
+      selectedNft!.contract.address,
+      selectedNft!.tokenId,
+      selectedNft!.media[0]?.thumbnail
+    );
   };
 
   const { isOpen, toggle } = useModal();
@@ -120,7 +123,7 @@ export const App = () => {
                   await handleClaimLand(i, j);
                 }}
               >
-                claim land {i} {j}
+                {i} {j}
                 <span>
                   <img style={{ padding: "4px" }} width={33} src={col} />
                 </span>

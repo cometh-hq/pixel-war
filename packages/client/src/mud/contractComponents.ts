@@ -27,6 +27,7 @@ export function defineContractComponents(world: World) {
         {
           tokenAddress: RecsType.String,
           tokenId: RecsType.BigInt,
+          image: RecsType.String,
         },
         {
           metadata: {

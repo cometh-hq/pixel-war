@@ -14,6 +14,7 @@ export default mudConfig({
       schema: {
         tokenAddress: "address",
         tokenId: "uint256",
+        image: "string",
       },
     },
   },
