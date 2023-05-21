@@ -1,5 +1,9 @@
 import { useComponentValue, useRows, useRow } from "@latticexyz/react";
 import { useMUD } from "./MUDContext";
+import "./styles.css";
+import Modal from "./component/modal";
+import useModal from "../src/hooks/useModal";
+
 import {
   Network,
   Alchemy,
@@ -43,10 +47,11 @@ export const App = () => {
     setUserNFTs(nftsForOwner.ownedNfts);
   };
 
+  const boardSize = 10;
   const emptyBoard: any = [];
-  for (var i = 0; i < 5; i++) {
-    emptyBoard[i] = new Array(5);
-    for (var j = 0; j < 5; j++) {
+  for (var i = 0; i < boardSize; i++) {
+    emptyBoard[i] = new Array(boardSize);
+    for (var j = 0; j < boardSize; j++) {
       emptyBoard[i][j] =
         "https://cdn-icons-png.flaticon.com/512/4211/4211763.png";
     }
@@ -55,20 +60,37 @@ export const App = () => {
   const initData = async (): Promise<any> => {
     const mapLands = await useRows(storeCache, { table: "MapLand" });
     mapLands.forEach(function (mapLand) {
-      console.log(mapLand.key.x, mapLand.key.y);
       emptyBoard[mapLand.key.x][mapLand.key.y] =
         "https://gateway.ipfs.io/ipfs/bafybeihlond74ij2vbzyuagma2uxtv2b7e4nmty6ujxbapqopsarzy3yo4/" +
         mapLand.value.tokenId.toString() +
         ".png";
     });
-    setBoard(emptyBoard);
+    // Binding bug for now
+    //setBoard(emptyBoard);
   };
 
   initData();
 
+  const { isOpen, toggle } = useModal();
+
   return (
     <>
       <div>
+        <button onClick={toggle}>Open Modal </button>
+        <Modal isOpen={isOpen} toggle={toggle}>
+          <button
+            type="button"
+            onClick={async (event) => {
+              event.preventDefault();
+              loadPlayerNft(userAddress);
+            }}
+          >
+            Load my NFTs
+          </button>
+          {userNFTs.map((nft) => (
+            <img src={nft.media[0].thumbnail} />
+          ))}
+        </Modal>
         {board.map((row, i) => (
           <div key={i}>
             {row.map((col: any, j: any) => (
@@ -107,20 +129,6 @@ export const App = () => {
         value={userAddress}
         onChange={(evt) => setUserAddress(evt.target.value)}
       />
-      <button
-        type="button"
-        onClick={async (event) => {
-          event.preventDefault();
-          loadPlayerNft(userAddress);
-        }}
-      >
-        Play
-      </button>
-      <br />
-      {userNFTs.map((nft) => (
-        <img src={nft.media[0].thumbnail} />
-      ))}
-      <br />
       <br />
       <>
         {mapLands.map((mapLand) => (
