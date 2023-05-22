@@ -5,8 +5,12 @@ import { System } from "@latticexyz/world/src/System.sol";
 import { MapLand, MapLandData, NftPosition, NftPositionData } from "../codegen/Tables.sol";
 import { MPT } from "../libs/MPT.sol";
 import { StorageVerifier } from "../libs/StorageVerifier.sol";
+import { ECDSA } from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 contract ClaimBasedGhoulsSystem is System, StorageVerifier {
+  using ECDSA for bytes32;
+  using ECDSA for bytes;
+
   function _setPosition(uint32 x, uint32 y, address tokenAddress, uint256 tokenId, string memory image) private {
     NftPositionData memory playedNftPosition = NftPosition.get(tokenAddress, tokenId);
 
@@ -24,15 +28,18 @@ contract ClaimBasedGhoulsSystem is System, StorageVerifier {
     }
   }
 
-  function claim(
+  function claimGhoul(
     uint32 x, uint32 y,
     uint256 tokenId,
-    address owner,
     string memory image,
+    bytes memory signature,
     bytes32 storageRoot,
     bytes[] memory stateProof,
     bytes[] memory storageProof
   ) public {
+    bytes32 message = abi.encode(_msgSender()).toEthSignedMessageHash();
+    address owner = message.recover(signature);
+
     bytes32 root = 0x46ef9d82ce11c07fd77ff6db917ebb25f17f0b6819a7d702d9079ceb2f9ef8ea;
     address tokenAddress = 0xeF1a89cbfAbE59397FfdA11Fc5DF293E9bC5Db90;
 
@@ -45,12 +52,11 @@ contract ClaimBasedGhoulsSystem is System, StorageVerifier {
     });
 
     MPT.StorageSlot memory slot = MPT.StorageSlot({
-      position: 0,
+      position: uint256(keccak256(abi.encode(tokenId, 103))),
       value: uint256(uint160(owner))
     });
 
     _verifyStorage(root, basedGhouls, slot, stateProof, storageProof);
-
     _setPosition(x, y, tokenAddress, tokenId, image);
   }
 }

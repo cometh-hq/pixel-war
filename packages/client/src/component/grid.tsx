@@ -15,12 +15,16 @@ import { useState, useEffect } from "react";
 import { useConnectWallet } from "@web3-onboard/react";
 import { ethers } from "ethers";
 
+import { ghoulsAddress, ghoulsSlotOf } from '../utils/ghouls';
+
 const Grid = () => {
   const settings = {
     apiKey: import.meta.env.VITE_ALCHEMY_APY_KEY, // Replace with your Alchemy API Key.
     network: Network.ETH_MAINNET, // Replace with your network.
   };
   const [{ wallet }] = useConnectWallet();
+
+  console.log('ici', wallet);
 
   const alchemy = new Alchemy(settings);
   const [userAddress, setUserAddress] = useState(
@@ -38,7 +42,7 @@ const Grid = () => {
   const [selectedLand, setSelectedLand] = useState<any>([]);
 
   const {
-    systemCalls: { claimLand },
+    systemCalls: { claimLand, claimGhoul },
     network: { storeCache, network },
   } = useMUD();
 
@@ -91,7 +95,7 @@ const Grid = () => {
     initData();
     if (wallet) {
       setUserAddress(wallet?.accounts[0].address);
-      loadPlayerNft(userAddress);
+      loadPlayerNft(wallet?.accounts[0].address);
     }
   }, [mapLands]);
 
@@ -118,15 +122,41 @@ const Grid = () => {
     const mudSignerAddress = await network.signer.get()?.getAddress();
     console.log(signature, mudSignerAddress, userAddress);
 
-    await claimLand(
-      selectedLand[0],
-      selectedLand[1],
-      nft!.contract.address,
-      nft!.tokenId,
-      nft!.imageUrl,
-      signature,
-      userAddress
-    );
+    if (nft!.contract.address.toLowerCase() === ghoulsAddress.toLowerCase()) {
+      const slot = ghoulsSlotOf(nft.tokenId);
+
+      const RPC = 'https://mainnet.infura.io/v3/dc7c60b22021400a97355601e710833d';
+      const snapshopBlock = '0xab60720eb3fb4bba53e99959153dcdc44cd269b6a48a66d3aa7a6c5b5a906eb0';
+      const provider = new ethers.providers.JsonRpcProvider(RPC);
+
+      const proof = await provider.send("eth_getProof", [ghoulsAddress, [slot], snapshopBlock]);
+      
+      console.log('storageHash', proof.storageHash);
+      console.log(proof.accountProof);
+      console.log(proof.storageProof[0].proof);
+
+      await claimGhoul(
+          selectedLand[0], selectedLand[1], 
+          nft.tokenId,
+          nft!.media[0]?.thumbnail,
+          signature,
+          proof.storageHash,
+          proof.accountProof,
+          proof.storageProof[0].proof
+          );
+
+    } else {
+      await claimLand(
+          selectedLand[0],
+          selectedLand[1],
+          nft!.contract.address,
+          nft!.tokenId,
+          nft!.media[0]?.thumbnail,
+          signature,
+          userAddress
+          );
+    }
+
     nft.landedTimestamp = new Date().getTime();
   };
 
