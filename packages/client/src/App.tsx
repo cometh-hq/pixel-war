@@ -248,14 +248,14 @@ export const App = () => {
   };
 
   const initData = async (): Promise<void> => {
-    const boardHeight = 15;
-    const boardLength = 20;
+    const boardHeight = 20;
+    const boardLength = 30;
     const emptyBoard: any = [];
     for (var i = 0; i < boardHeight; i++) {
       emptyBoard[i] = new Array(boardHeight);
       for (var j = 0; j < boardLength; j++) {
-        emptyBoard[i][j] =
-          "https://cdn-icons-png.flaticon.com/512/4211/4211763.png";
+        emptyBoard[i][j] = "";
+        /* "https://cdn-icons-png.flaticon.com/512/4211/4211763.png";*/
       }
     }
     mapLands.forEach(function (mapLand) {
@@ -417,51 +417,56 @@ export const App = () => {
             </div>
           </Modal>
         )}
-        <div className="profileBox">
-          {wallet ? (
-            <>
-              {signature ? (
+        <div className="grid">
+          <div className="headerBox">
+            <img width={120} src={"/pfpWeb3Onboard.png"} />
+            <div className="profileBox">
+              {wallet ? (
                 <>
-                  {" "}
-                  <span style={{ fontSize: "12px", color: "lightgray" }}>
-                    {trunc(userAddress)}
-                  </span>
-                  <button
-                    className="disconnectButton"
-                    onClick={() => disconnectWallet()}
-                  >
-                    Log out
-                  </button>
+                  {signature ? (
+                    <>
+                      {" "}
+                      <span className="address">{trunc(userAddress)}</span>
+                      <button
+                        className="niceButton"
+                        onClick={() => disconnectWallet()}
+                      >
+                        Log out
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button className="niceButton" onClick={() => toggle()}>
+                        Sign message
+                      </button>
+                    </>
+                  )}
                 </>
               ) : (
-                <>
-                  <button className="disconnectButton" onClick={() => toggle()}>
-                    Sign message
-                  </button>
-                </>
+                <button className="niceButton" onClick={() => toggle()}>
+                  Connect your Wallet
+                </button>
               )}
-            </>
-          ) : (
-            <button onClick={() => toggle()}>Connect your Wallet</button>
-          )}
-        </div>
-        <div className="grid">
-          {board.map((row: any, i: number) => (
-            <div className="row" key={i}>
-              {row.map((col: string, j: number) => (
-                <div
-                  className="tile"
-                  onClick={async (event) => {
-                    event.preventDefault();
-                    setSelectedLand([i, j]);
-                    toggle();
-                  }}
-                >
-                  <img width={33} src={col} />
-                </div>
-              ))}
             </div>
-          ))}
+          </div>
+          <div className="board">
+            {board.map((row: any, i: number) => (
+              <div className="row" key={i}>
+                {row.map((col: string, j: number) => (
+                  <div
+                    className="tile"
+                    onClick={async (event) => {
+                      event.preventDefault();
+                      setSelectedLand([i, j]);
+                      toggle();
+                    }}
+                  >
+                    <img width={33} src={col} />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
       {!wallet && !signature && (
@@ -476,19 +481,21 @@ export const App = () => {
                 />
                 <p>
                   Take the L2 space with NFTs you own in L1 <br></br> (no bridge
-                  needed, everything works with storage proof){" "}
+                  or oracle needed, everything works with storage proof{" "}
+                  <a href="#" rel="noopener noreferrer" target="_blank">
+                    read more
+                  </a>
+                  ){" "}
                 </p>
-                <a href="#" rel="noopener noreferrer" target="_blank">
-                  more infos
-                </a>
-                <button
-                  className="connectButton"
-                  onClick={() => connectWallet()}
-                >
-                  {connecting && "connecting"}
-                  Connect your Wallet
-                </button>
-                <p>You will be able to use your Ethereum L1 NFTs !</p>
+                <p>
+                  <button
+                    className="niceButton"
+                    onClick={() => connectWallet()}
+                  >
+                    {connecting && "connecting"}
+                    Connect your Wallet
+                  </button>
+                </p>
               </>
             )}
           </div>
@@ -507,15 +514,13 @@ export const App = () => {
             </p>
 
             <button
-              className="connectButton"
+              className="niceButton"
               onClick={async () => await signMessage()}
             >
               Import your NFTs !{" "}
             </button>
-            <button
-              className="disconnectButton"
-              onClick={() => disconnectWallet()}
-            >
+            <br />
+            <button className="" onClick={() => disconnectWallet()}>
               Log out
             </button>
           </div>
