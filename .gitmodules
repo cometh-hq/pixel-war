@@ -1,0 +1,3 @@
+[submodule "packages/op-geth"]
+	path = packages/op-geth
+	url = git@github.com:Kelvyne/op-geth.git
