@@ -1,7 +1,9 @@
 import { useConnectWallet } from "@web3-onboard/react";
+import { useNavigate } from "react-router-dom";
 
 const DisconnectWallet = () => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
+  const navigate = useNavigate();
 
   const disconnectWallet = (): void => {
     if (wallet?.label) {
@@ -9,14 +11,13 @@ const DisconnectWallet = () => {
     }
     window.localStorage.removeItem("selectedWallet");
     window.localStorage.removeItem("signature");
+    navigate("/");
   };
 
   return (
-    <div className="connectWallet">
-      <button className="disconnectButton" onClick={() => disconnectWallet()}>
-        Disconnect
-      </button>
-    </div>
+    <button className="disconnectButton" onClick={() => disconnectWallet()}>
+      Log out
+    </button>
   );
 };
 

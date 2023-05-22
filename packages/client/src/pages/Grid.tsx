@@ -1,7 +1,7 @@
 import { useRows } from "@latticexyz/react";
 import { useMUD } from "../MUDContext";
 import Modal from "../component/modal";
-import DisconnectWallet from "./disconnectWallet";
+import DisconnectWallet from "../component/disconnectWallet";
 import useModal from "../../src/hooks/useModal";
 import { trunc } from "../utils/format";
 import {
@@ -14,17 +14,16 @@ import {
 import { useState, useEffect } from "react";
 import { useConnectWallet } from "@web3-onboard/react";
 import { ethers } from "ethers";
+import Countdown, { zeroPad } from "react-countdown";
 
 import { ghoulsAddress, ghoulsSlotOf } from "../utils/ghouls";
 
-const Grid = () => {
+export const Grid = () => {
   const settings = {
     apiKey: import.meta.env.VITE_ALCHEMY_APY_KEY, // Replace with your Alchemy API Key.
     network: Network.ETH_MAINNET, // Replace with your network.
   };
   const [{ wallet }] = useConnectWallet();
-
-  console.log("ici", wallet);
 
   const alchemy = new Alchemy(settings);
   const [userAddress, setUserAddress] = useState(
@@ -40,7 +39,7 @@ const Grid = () => {
     imageUrl: string;
   };
 
-  const [userNFTs, setUserNFTs] = useState<NftWithPosition[]>([]);
+  const [userNFTs, setUserNFTs] = useState<Array<NftWithPosition[]>>([]);
   const [board, setBoard] = useState<any>([]);
   const [selectedNft, setSelectedNft] = useState<NftWithPosition | null>(null);
   const [selectedLand, setSelectedLand] = useState<any>([]);
@@ -138,7 +137,13 @@ const Grid = () => {
       };
     });
 
-    setUserNFTs(nfts);
+    const formattedNfts = [];
+
+    for (let i = 0; i < nfts.length; i += 5) {
+      formattedNfts.push(nfts.slice(i, i + 5));
+    }
+
+    setUserNFTs(formattedNfts);
   };
 
   useEffect(() => {
@@ -147,16 +152,17 @@ const Grid = () => {
     loadPublicGhoulsNFTs();
     if (wallet) {
       setUserAddress(wallet?.accounts[0].address);
-      loadPlayerNft(wallet?.accounts[0].address);
+      loadPlayerNft("0x4D33B9C8A02EC9a892C98aA9561A3e743dF1FEA3");
     }
   }, [mapLands]);
 
   const initData = async (): Promise<void> => {
-    const boardSize = 15;
+    const boardHeight = 15;
+    const boardLength = 20;
     const emptyBoard: any = [];
-    for (var i = 0; i < boardSize; i++) {
-      emptyBoard[i] = new Array(boardSize);
-      for (var j = 0; j < boardSize; j++) {
+    for (var i = 0; i < boardHeight; i++) {
+      emptyBoard[i] = new Array(boardHeight);
+      for (var j = 0; j < boardLength; j++) {
         emptyBoard[i][j] =
           "https://cdn-icons-png.flaticon.com/512/4211/4211763.png";
       }
@@ -192,13 +198,14 @@ const Grid = () => {
       console.log("storageHash", proof.storageHash);
       console.log(proof.accountProof);
       console.log(proof.storageProof[0].proof);
+      console.log({ signature });
 
       await claimGhoul(
         selectedLand[0],
         selectedLand[1],
         nft.tokenId,
         nft!.imageUrl,
-        signature,
+        signature!,
         proof.storageHash,
         proof.accountProof,
         proof.storageProof[0].proof
@@ -218,78 +225,114 @@ const Grid = () => {
 
   const { isOpen, toggle } = useModal();
 
-  return (
-    <div className="gridContainer">
-      <Modal isOpen={isOpen} toggle={toggle}>
-        <h2>Select Your Nft</h2>
-        {publicGhoulsNFTs.map((nft) => (
-          <div>
-            <button
-              type="button"
-              disabled={new Date().getTime() - nft.landedTimestamp <= 60 * 1000}
-              onClick={async () => {
-                try {
-                  setSelectedNft(nft);
-                  await claim(nft);
-                  toggle();
-                } catch {
-                  alert("You don't own this NFT");
-                }
-              }}
-            >
-              <span>
-                <img style={{ padding: "4px" }} width={50} src={nft.imageUrl} />
-              </span>
-            </button>
-          </div>
-        ))}
-        {userNFTs.map((nft) => (
-          <div>
-            <button
-              type="button"
-              disabled={new Date().getTime() - nft.landedTimestamp <= 60 * 1000}
-              onClick={async () => {
-                setSelectedNft(nft);
-                claim(nft);
-                toggle();
-              }}
-            >
-              <span>
-                <img style={{ padding: "4px" }} width={50} src={nft.imageUrl} />
-              </span>
-            </button>
-          </div>
-        ))}
-      </Modal>
-      <div className="profile">
-        <span>{trunc(userAddress)}</span>
-        <DisconnectWallet />
-      </div>
-      <br />
+  function renderer({ minutes, seconds }: any) {
+    return <p>{`${zeroPad(minutes)}m${zeroPad(seconds)}s`}</p>;
+  }
 
-      <br />
-      <br />
-      <div className="grid">
-        {board.map((row: any, i: number) => (
-          <div key={i}>
-            {row.map((col: string, j: number) => (
-              <button
-                type="button"
-                className="button"
-                onClick={async (event) => {
-                  event.preventDefault();
-                  setSelectedLand([i, j]);
-                  toggle();
-                }}
-              >
-                <img width={33} src={col} />
-              </button>
+  return (
+    <>
+      <div className="gridContainer">
+        <Modal isOpen={isOpen} toggle={toggle}>
+          <h2 style={{ fontFamily: "poppins" }}>Select Your Nft</h2>
+          {/*   <div style={{ display: "flex" }}>
+            {publicGhoulsNFTs.map((nft) => (
+              <div>
+                <div
+                  className="nft"
+                  style={{
+                    pointerEvents:
+                      new Date().getTime() - nft.landedTimestamp <= 60 * 1000
+                        ? "auto"
+                        : "none",
+                  }}
+                  onClick={async () => {
+                    try {
+                      setSelectedNft(nft);
+                      await claim(nft);
+                      toggle();
+                    } catch {
+                      alert("You don't own this NFT");
+                    }
+                  }}
+                >
+                  <img
+                    style={{ padding: "4px" }}
+                    width={150}
+                    height={150}
+                    src={nft.imageUrl}
+                  />
+                </div>
+              </div>
+            ))}
+          </div> */}
+          <div className="nftModal" style={{ overflow: "scroll" }}>
+            {userNFTs.map((row: any, i: number) => (
+              <div className="row" key={i}>
+                {row.map((nft: any) => (
+                  <>
+                    <div
+                      className="nft"
+                      style={{ position: "relative" }}
+                      onClick={async () => {
+                        setSelectedNft(nft);
+                        claim(nft);
+                        toggle();
+                      }}
+                    >
+                      <img
+                        style={{
+                          position: "relative",
+                          opacity:
+                            new Date().getTime() - nft.landedTimestamp <=
+                            60 * 1000
+                              ? 0.2
+                              : 1,
+                        }}
+                        width={150}
+                        src={nft.media[0].thumbnail}
+                      />
+                      {new Date().getTime() - nft.landedTimestamp <=
+                        60 * 1000 && (
+                        <div style={{ zIndex: 2, position: "absolute" }}>
+                          <Countdown
+                            renderer={renderer}
+                            date={nft.landedTimestamp + 60 * 1000}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ))}
+              </div>
             ))}
           </div>
-        ))}
+        </Modal>
+        <div className="profileBox">
+          <span style={{ fontSize: "12px", color: "lightgray" }}>
+            {trunc(userAddress)}
+          </span>
+          <DisconnectWallet />
+        </div>
+        <div className="grid">
+          {board.map((row: any, i: number) => (
+            <div className="row" key={i}>
+              {row.map((col: string, j: number) => (
+                <div
+                  className="tile"
+                  onClick={async (event) => {
+                    event.preventDefault();
+                    setSelectedLand([i, j]);
+                    toggle();
+                  }}
+                >
+                  <img width={33} src={col} />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+      <img className="backgroundImage" width={300} src={"../weAbove.png"} />
+    </>
   );
 };
-
-export default Grid;

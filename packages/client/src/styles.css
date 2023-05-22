@@ -1,3 +1,14 @@
+html {
+  height: 100%;
+}
+body {
+  min-height: 100%;
+}
+
+div#react-root {
+  height: 100vh;
+}
+
 .container {
   font-family: "poppins";
 }
@@ -25,6 +36,28 @@
   height: 70%;
   padding: 1rem;
   border-radius: 1rem;
+  max-width: 100%;
+}
+
+.nftModal {
+  display: "flex";
+  flex-direction: "column";
+  justify-content: "flex-start";
+  align-items: "center";
+  width: "100%";
+}
+
+.nft {
+  display: "flex";
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px;
+  margin: 0;
+  min-width: 50px;
+  min-height: 150px;
+  background-color: white;
 }
 
 .connectWallet {
@@ -52,9 +85,10 @@
 .disconnectButton {
   font-family: "poppins";
   border-radius: 10px;
-  background-color: #bc4749;
+  background-color: #6a040f;
   color: white;
-  padding: 10px;
+  padding: 5px;
+  border: 1px solid grey;
 }
 
 .disconnectButton:hover {
@@ -65,11 +99,21 @@
 .gridContainer {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  background-color: #a3a3a338;
+  height: 100%;
 }
 
 .profile {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.profileBox {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -78,8 +122,9 @@
   background-color: black;
   color: white;
   border-radius: 5px;
-  border: 2px solid #a4133c;
+  border: 2px solid #6a040f;
   padding: 10px;
+  margin: 5px;
 }
 
 .grid {
@@ -87,9 +132,44 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  border: 6px double;
+  border-radius: 5px;
 }
 
-.button {
+.row {
+  display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
+}
+
+.tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 35px;
+  width: 35px;
+  border: 0.5px solid grey;
+  padding: 5px;
+  background-color: white;
+}
+
+.tile:hover {
+  opacity: 0.4;
+  cursor: pointer;
+}
+
+.backgroundImage {
+  opacity: 0.4;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  position: absolute;
+}
+
+.row {
+  display: "flex";
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
