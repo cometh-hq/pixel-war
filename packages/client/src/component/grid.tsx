@@ -15,7 +15,7 @@ import { useState, useEffect } from "react";
 import { useConnectWallet } from "@web3-onboard/react";
 import { ethers } from "ethers";
 
-import { ghoulsAddress, ghoulsSlotOf } from '../utils/ghouls';
+import { ghoulsAddress, ghoulsSlotOf } from "../utils/ghouls";
 
 const Grid = () => {
   const settings = {
@@ -24,11 +24,15 @@ const Grid = () => {
   };
   const [{ wallet }] = useConnectWallet();
 
-  console.log('ici', wallet);
+  console.log("ici", wallet);
 
   const alchemy = new Alchemy(settings);
   const [userAddress, setUserAddress] = useState(
     "0x4D33B9C8A02EC9a892C98aA9561A3e743dF1FEA3"
+  );
+
+  const [publicGhoulsNFTs, setPublicGhoulsNFTs] = useState<NftWithPosition[]>(
+    []
   );
 
   type NftWithPosition = OwnedNft & {
@@ -47,6 +51,52 @@ const Grid = () => {
   } = useMUD();
 
   const mapLands = useRows(storeCache, { table: "MapLand" });
+
+  const loadPublicGhoulsNFTs = async () => {
+    console.log("LOADING public ghouls ");
+
+    const options: GetNftsForOwnerOptions = {
+      contractAddresses: ["0xef1a89cbfabe59397ffda11fc5df293e9bc5db90"],
+    };
+
+    const nftsForOwner = await alchemy.nft.getNftsForOwner(
+      "vincentlg.eth",
+      options
+    );
+
+    const nftsWithMedia = nftsForOwner.ownedNfts.filter(
+      (nftsForOwner) => nftsForOwner.media.length > 0
+    );
+
+    const nfts = nftsWithMedia.map((nft) => {
+      const nftAddress = ethers.utils.getAddress(nft.contract.address);
+      const nftPosition = storeCache.tables.NftPosition.scan({
+        key: {
+          eq: {
+            tokenAddress: nftAddress,
+            tokenId: BigInt(nft.tokenId),
+          },
+        },
+      });
+
+      let landedTimestamp = 0;
+      const imageUrl = nft.media[0]?.thumbnail ? nft.media[0]!.thumbnail : "";
+      if (nftPosition.length > 0) {
+        const position = nftPosition[0];
+        landedTimestamp = parseInt(position.value.landedDate.toString()) * 1000;
+        let playable = new Date().getTime() - landedTimestamp > 60 * 1000;
+        console.log(playable);
+      }
+
+      return {
+        ...nft,
+        landedTimestamp: landedTimestamp,
+        imageUrl: imageUrl,
+      };
+    });
+
+    setPublicGhoulsNFTs(nfts);
+  };
 
   const loadPlayerNft = async (playerAddress: string) => {
     console.log("LOADING Player ", playerAddress);
@@ -93,6 +143,8 @@ const Grid = () => {
 
   useEffect(() => {
     initData();
+
+    loadPublicGhoulsNFTs();
     if (wallet) {
       setUserAddress(wallet?.accounts[0].address);
       loadPlayerNft(wallet?.accounts[0].address);
@@ -125,36 +177,42 @@ const Grid = () => {
     if (nft!.contract.address.toLowerCase() === ghoulsAddress.toLowerCase()) {
       const slot = ghoulsSlotOf(nft.tokenId);
 
-      const RPC = 'https://mainnet.infura.io/v3/dc7c60b22021400a97355601e710833d';
-      const snapshopBlock = '0xab60720eb3fb4bba53e99959153dcdc44cd269b6a48a66d3aa7a6c5b5a906eb0';
+      const RPC =
+        "https://mainnet.infura.io/v3/dc7c60b22021400a97355601e710833d";
+      const snapshopBlock =
+        "0xab60720eb3fb4bba53e99959153dcdc44cd269b6a48a66d3aa7a6c5b5a906eb0";
       const provider = new ethers.providers.JsonRpcProvider(RPC);
 
-      const proof = await provider.send("eth_getProof", [ghoulsAddress, [slot], snapshopBlock]);
-      
-      console.log('storageHash', proof.storageHash);
+      const proof = await provider.send("eth_getProof", [
+        ghoulsAddress,
+        [slot],
+        snapshopBlock,
+      ]);
+
+      console.log("storageHash", proof.storageHash);
       console.log(proof.accountProof);
       console.log(proof.storageProof[0].proof);
 
       await claimGhoul(
-          selectedLand[0], selectedLand[1], 
-          nft.tokenId,
-          nft!.media[0]?.thumbnail,
-          signature,
-          proof.storageHash,
-          proof.accountProof,
-          proof.storageProof[0].proof
-          );
-
+        selectedLand[0],
+        selectedLand[1],
+        nft.tokenId,
+        nft!.imageUrl,
+        signature,
+        proof.storageHash,
+        proof.accountProof,
+        proof.storageProof[0].proof
+      );
     } else {
       await claimLand(
-          selectedLand[0],
-          selectedLand[1],
-          nft!.contract.address,
-          nft!.tokenId,
-          nft!.media[0]?.thumbnail,
-          signature,
-          userAddress
-          );
+        selectedLand[0],
+        selectedLand[1],
+        nft!.contract.address,
+        nft!.tokenId,
+        nft!.imageUrl,
+        signature,
+        userAddress
+      );
     }
 
     nft.landedTimestamp = new Date().getTime();
@@ -166,6 +224,27 @@ const Grid = () => {
     <div className="gridContainer">
       <Modal isOpen={isOpen} toggle={toggle}>
         <h2>Select Your Nft</h2>
+        {publicGhoulsNFTs.map((nft) => (
+          <div>
+            <button
+              type="button"
+              disabled={new Date().getTime() - nft.landedTimestamp <= 60 * 1000}
+              onClick={async () => {
+                try {
+                  setSelectedNft(nft);
+                  await claim(nft);
+                  toggle();
+                } catch {
+                  alert("You don't own this NFT");
+                }
+              }}
+            >
+              <span>
+                <img style={{ padding: "4px" }} width={50} src={nft.imageUrl} />
+              </span>
+            </button>
+          </div>
+        ))}
         {userNFTs.map((nft) => (
           <div>
             <button
