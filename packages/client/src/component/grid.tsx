@@ -45,15 +45,18 @@ const Grid = () => {
 
   const loadPlayerNft = async (playerAddress: string) => {
     console.log("LOADING Player ", playerAddress);
-    const options: GetNftsForOwnerOptions = {
+
+    /*const options: GetNftsForOwnerOptions = {
       contractAddresses: ["0xef1a89cbfabe59397ffda11fc5df293e9bc5db90"],
-    };
-    const nftsForOwner = await alchemy.nft.getNftsForOwner(
-      playerAddress,
-      options
+    };*/
+
+    const nftsForOwner = await alchemy.nft.getNftsForOwner(playerAddress);
+
+    const nftsWithMedia = nftsForOwner.ownedNfts.filter(
+      (nftsForOwner) => nftsForOwner.media.length > 0
     );
 
-    const nfts = nftsForOwner.ownedNfts.map((nft) => {
+    const nfts = nftsWithMedia.map((nft) => {
       const nftAddress = ethers.utils.getAddress(nft.contract.address);
       const nftPosition = storeCache.tables.NftPosition.scan({
         key: {
