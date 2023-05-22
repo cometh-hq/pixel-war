@@ -24,9 +24,5 @@ contract ClaimLandSystem is System {
     MapLand.set(x, y, MapLandData({tokenAddress: tokenAddress, tokenId: tokenId, image:image }));
     NftPosition.set(tokenAddress, tokenId,  NftPositionData({x: x, y:y, landedDate: block.timestamp}));
 
-    if (mapLand.tokenId != 0) {
-      NftPositionData memory clearPositionData = NftPositionData({x: 0, y:0, landedDate: 0});
-      NftPosition.set(mapLand.tokenAddress, mapLand.tokenId, clearPositionData) ;
-    }
   }
 }

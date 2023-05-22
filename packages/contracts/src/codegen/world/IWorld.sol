@@ -7,12 +7,11 @@ import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
 
 import { IClaimBasedGhoulsSystem } from "./IClaimBasedGhoulsSystem.sol";
 import { IClaimLandSystem } from "./IClaimLandSystem.sol";
-import { IIncrementSystem } from "./IIncrementSystem.sol";
 
 /**
  * The IWorld interface includes all systems dynamically added to the World
  * during the deploy process.
  */
-interface IWorld is IBaseWorld, IClaimBasedGhoulsSystem, IClaimLandSystem, IIncrementSystem {
+interface IWorld is IBaseWorld, IClaimBasedGhoulsSystem, IClaimLandSystem {
 
 }
