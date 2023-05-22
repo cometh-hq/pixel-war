@@ -20,7 +20,7 @@ export function createSystemCalls(
     y: number,
     tokenAddress: string,
     tokenId: string,
-    image: string | undefined
+    image: string
   ) => {
     const tx = await worldSend("claim", [x, y, tokenAddress, tokenId, image]);
     await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash);

@@ -1,190 +1,127 @@
-import { useRows } from "@latticexyz/react";
-import { Type as RecsType } from "@latticexyz/recs";
-import { useMUD } from "./MUDContext";
 import "./styles.css";
-import Modal from "./component/modal";
-import useModal from "../src/hooks/useModal";
+import ConnectWallet from "./component/ConnectWallet";
+import DisconnectWallet from "./component/disconnectWallet";
+import Grid from "./component/grid";
+import { SiweMessage } from "siwe";
+import { useMUD } from "./MUDContext";
+import { Networks, ETHEREUM_MAINNET } from "./utils/Networks";
 
-import {
-  Network,
-  Alchemy,
-  GetNftsForOwnerOptions,
-  OwnedNft,
-  Nft,
-} from "alchemy-sdk";
 import { useState, useEffect } from "react";
+import { useConnectWallet, useSetChain } from "@web3-onboard/react";
 import { ethers } from "ethers";
 
 export const App = () => {
-  const settings = {
-    apiKey: import.meta.env.VITE_ALCHEMY_APY_KEY, // Replace with your Alchemy API Key.
-    network: Network.ETH_MAINNET, // Replace with your network.
-  };
+  const [{ wallet }, connect] = useConnectWallet();
+  const [{ connectedChain }, setChain] = useSetChain();
 
-  const alchemy = new Alchemy(settings);
-  const [userAddress, setUserAddress] = useState(
-    "0x4D33B9C8A02EC9a892C98aA9561A3e743dF1FEA3"
-  );
-
-  type NftWithPosition = OwnedNft & {
-    landedTimestamp: number;
-  };
-
-  const [userNFTs, setUserNFTs] = useState<NftWithPosition[]>([]);
-  const [board, setBoard] = useState<any>([]);
-  const [selectedNft, setSelectedNft] = useState<NftWithPosition | null>(null);
-  const [selectedLand, setSelectedLand] = useState<any>([]);
+  const [signer, setSigner] = useState<ethers.Signer | null>(null);
+  const [mudAddress, setMudAddress] = useState<string | undefined>("");
+  const [hasSigned, setHasSigned] = useState<boolean>(false);
 
   const {
-    systemCalls: { claimLand },
-    network: { storeCache },
+    network: { network },
   } = useMUD();
 
-  const mapLands = useRows(storeCache, { table: "MapLand" });
+  useEffect(() => {
+    const previouslyConnectedWallets =
+      window.localStorage.getItem("selectedWallet");
 
-  const loadPlayerNft = async (playerAddress: string) => {
-    console.log("LOADING Player ", playerAddress);
-    const options: GetNftsForOwnerOptions = {
-      contractAddresses: ["0xef1a89cbfabe59397ffda11fc5df293e9bc5db90"],
-    };
-    const nftsForOwner = await alchemy.nft.getNftsForOwner(
-      playerAddress,
-      options
-    );
-
-    const nfts = nftsForOwner.ownedNfts.map((nft) => {
-      const nftAddress = ethers.utils.getAddress(nft.contract.address);
-      const nftPosition = storeCache.tables.NftPosition.scan({
-        key: {
-          eq: {
-            tokenAddress: nftAddress,
-            tokenId: BigInt(nft.tokenId),
-          },
+    if (
+      previouslyConnectedWallets != null &&
+      previouslyConnectedWallets !== ""
+    ) {
+      connect({
+        autoSelect: {
+          label: JSON.parse(previouslyConnectedWallets),
+          disableModals: true,
         },
       });
+    }
 
-      let landedTimestamp = 0;
-      if (nftPosition.length > 0) {
-        const position = nftPosition[0];
-        landedTimestamp = parseInt(position.value.landedDate.toString()) * 1000;
-        let playable = new Date().getTime() - landedTimestamp > 60 * 1000;
-        console.log(playable);
-      }
-
-      return {
-        ...nft,
-        landedTimestamp: landedTimestamp,
-      };
-    });
-
-    console.log(nfts);
-    setUserNFTs(nfts);
-  };
+    getMudSignerAddress();
+  }, []);
 
   useEffect(() => {
-    initData();
-  }, [mapLands]);
+    if (wallet && !signer) {
+      const networks = new Networks();
+      const currentNetwork = networks.getNetworkData(connectedChain!.id);
 
-  const initData = async (): Promise<void> => {
-    const boardSize = 10;
-    const emptyBoard: any = [];
-    for (var i = 0; i < boardSize; i++) {
-      emptyBoard[i] = new Array(boardSize);
-      for (var j = 0; j < boardSize; j++) {
-        emptyBoard[i][j] =
-          "https://cdn-icons-png.flaticon.com/512/4211/4211763.png";
+      if (currentNetwork !== ETHEREUM_MAINNET) {
+        setChain({ chainId: ETHEREUM_MAINNET.chainId });
+      }
+      localStorage.setItem("selectedWallet", JSON.stringify(wallet?.label));
+      const provider = new ethers.providers.Web3Provider(wallet.provider);
+      if (provider) {
+        setSigner(provider!.getSigner());
       }
     }
-    mapLands.forEach(function (mapLand) {
-      emptyBoard[mapLand.key.x][mapLand.key.y] = mapLand.value.image;
+  }, [wallet]);
+
+  const getMudSignerAddress = async (): Promise<void> => {
+    const mudSignerAddress = await network.signer.get()?.getAddress();
+    setMudAddress(mudSignerAddress);
+  };
+
+  const createMessage = (nonce: string): SiweMessage => {
+    if (!window || !wallet) {
+      throw new Error("No window nor wallet");
+    }
+
+    const domain = window.location.host;
+    const uri = window.location.origin;
+
+    const message = new SiweMessage({
+      domain,
+      uri,
+      statement: `Sign in with Ethereum to PFP War as ${mudAddress}`,
+      address: ethers.utils.getAddress(wallet?.accounts[0].address),
+      version: "1",
+      chainId: 1,
+      nonce,
     });
 
-    setBoard(emptyBoard);
+    return message;
   };
 
-  const claim = async (nft: NftWithPosition) => {
-    console.log(selectedLand[0]);
-    await claimLand(
-      selectedLand[0],
-      selectedLand[1],
-      nft!.contract.address,
-      nft!.tokenId,
-      nft!.media[0]?.thumbnail
-    );
-    nft.landedTimestamp = new Date().getTime();
-  };
+  const signMessage = async (): Promise<void> => {
+    const nonce = `${crypto.randomUUID().replace(/-/g, "")}`;
+    const message = createMessage(nonce);
+    const messageToSign = message.prepareMessage();
+    const signature = await signer!.signMessage(messageToSign);
 
-  const { isOpen, toggle } = useModal();
+    try {
+      await message.verify({
+        signature,
+        nonce: nonce,
+      });
+      setHasSigned(true);
+    } catch (error) {
+      alert("The signature is wrong");
+    }
+  };
 
   return (
-    <>
-      <div>
-        <Modal isOpen={isOpen} toggle={toggle}>
-          <h2>Select Your Nft</h2>
+    <div className="container">
+      {!wallet && <ConnectWallet />}
+      {wallet && !hasSigned && (
+        <div className="connectWallet">
+          <img
+            style={{ padding: "4px" }}
+            width={700}
+            src={"../src/assets/logoHackhaton.png"}
+          />
+          <p className="test">Prove that you own the address</p>
 
-          {userNFTs.map((nft) => (
-            <div>
-              <button
-                type="button"
-                disabled={
-                  new Date().getTime() - nft.landedTimestamp <= 60 * 1000
-                }
-                onClick={async () => {
-                  setSelectedNft(nft);
-                  claim(nft);
-                  toggle();
-                }}
-              >
-                <span>
-                  <img
-                    style={{ padding: "4px" }}
-                    width={33}
-                    src={nft.media[0].thumbnail}
-                  />
-                </span>
-              </button>
-            </div>
-          ))}
-        </Modal>
-        Play As{" "}
-        <input
-          name="playAsInput"
-          value={userAddress}
-          onChange={(evt) => setUserAddress(evt.target.value)}
-        />
-        <button
-          type="button"
-          onClick={async (event) => {
-            event.preventDefault();
-            loadPlayerNft(userAddress);
-          }}
-        >
-          Play
-        </button>
-        <br />
-        <br />
-        <br />
-        {board.map((row: any, i: number) => (
-          <div key={i}>
-            {row.map((col: string, j: number) => (
-              <button
-                type="button"
-                onClick={async (event) => {
-                  event.preventDefault();
-                  setSelectedLand([i, j]);
-                  toggle();
-                }}
-              >
-                {i} {j}
-                <span>
-                  <img style={{ padding: "4px" }} width={33} src={col} />
-                </span>
-              </button>
-            ))}
-          </div>
-        ))}
-      </div>
-      <br />
-    </>
+          <button
+            className="connectButton"
+            onClick={async () => await signMessage()}
+          >
+            Verify Address
+          </button>
+          <DisconnectWallet />
+        </div>
+      )}
+      {wallet && hasSigned && <Grid />}
+    </div>
   );
 };

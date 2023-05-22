@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@ethersproject/providers": "^5.7.2",
+    "@fontsource/poppins": "^5.0.0",
     "@latticexyz/common": "2.0.0-alpha.1.177+5ec509dd",
     "@latticexyz/dev-tools": "2.0.0-alpha.1.177+5ec509dd",
     "@latticexyz/network": "2.0.0-alpha.1.177+5ec509dd",
@@ -23,11 +24,19 @@
     "@latticexyz/utils": "2.0.0-alpha.1.177+5ec509dd",
     "@latticexyz/world": "2.0.0-alpha.1.177+5ec509dd",
     "@wagmi/chains": "^0.2.22",
+    "@web3-onboard/coinbase": "^2.2.4",
+    "@web3-onboard/core": "^2.19.1",
+    "@web3-onboard/injected-wallets": "^2.9.0",
+    "@web3-onboard/react": "^2.8.3",
+    "@web3-onboard/walletconnect": "^2.3.8",
     "alchemy-sdk": "^2.8.3",
     "contracts": "workspace:*",
     "ethers": "^5.7.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "rollup-plugin-node-polyfills": "^0.2.1",
+    "siwe": "^2.1.4",
+    "vite-plugin-node-stdlib-browser": "^0.2.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.6",
