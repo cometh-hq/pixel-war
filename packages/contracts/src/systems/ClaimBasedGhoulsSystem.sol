@@ -40,9 +40,12 @@ contract ClaimBasedGhoulsSystem is System, StorageVerifier {
     bytes32 message = abi.encode(_msgSender()).toEthSignedMessageHash();
     address owner = message.recover(signature);
 
-    bytes32 root = 0x46ef9d82ce11c07fd77ff6db917ebb25f17f0b6819a7d702d9079ceb2f9ef8ea;
+    // Since this contract is not deployed on a network that settles on mainnet, 
+    // We hardcode the root and bypass the block hash check
+    bytes32 stateRoot = 0x46ef9d82ce11c07fd77ff6db917ebb25f17f0b6819a7d702d9079ceb2f9ef8ea;
     address tokenAddress = 0xeF1a89cbfAbE59397FfdA11Fc5DF293E9bC5Db90;
 
+    // Expectation: the provided proof is dedicated for the Ghoul
     MPT.Account memory basedGhouls = MPT.Account({
       accountAddress: tokenAddress,
       balance: 0,
@@ -51,12 +54,14 @@ contract ClaimBasedGhoulsSystem is System, StorageVerifier {
       codeHash: 0xfc1ea81db44e2de921b958dc92da921a18968ff3f3465bd475fb86dd1af03986
     });
 
+    // Expectation: the slot contains the address of the owner
     MPT.StorageSlot memory slot = MPT.StorageSlot({
       position: uint256(keccak256(abi.encode(tokenId, 103))),
       value: uint256(uint160(owner))
     });
 
-    _verifyStorage(root, basedGhouls, slot, stateProof, storageProof);
+    // Then verify the proof
+    _verifyStorage(stateRoot, basedGhouls, slot, stateProof, storageProof);
     _setPosition(x, y, tokenAddress, tokenId, image);
   }
 }
