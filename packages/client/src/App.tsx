@@ -52,8 +52,18 @@ export const App = () => {
     }
   }, []);
 
+  const toggleAfterConnection = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    toggle();
+  };
+
   useEffect(() => {
     if (wallet) {
+      const signature = localStorage.getItem("signature");
+      if (!signature) {
+        toggleAfterConnection();
+      }
+      setSignature(signature!);
       localStorage.setItem("selectedWallet", JSON.stringify(wallet?.label));
       const networks = new Networks();
       const currentNetwork = networks.getNetworkData(connectedChain!.id);
@@ -74,10 +84,6 @@ export const App = () => {
   useEffect(() => {
     initData();
     loadPublicGhoulsNFTs();
-    const signature = localStorage.getItem("signature");
-    if (!wallet || !signature) {
-      toggle();
-    }
   }, [mapLands]);
 
   const alchemy = new Alchemy(settings);
@@ -100,6 +106,7 @@ export const App = () => {
   const [board, setBoard] = useState<any>([]);
   const [selectedNft, setSelectedNft] = useState<NftWithPosition | null>(null);
   const [selectedLand, setSelectedLand] = useState<any>([]);
+  const { isOpen, toggle } = useModal();
 
   const connectWallet = async (): Promise<void> => {
     toggle();
@@ -307,8 +314,6 @@ export const App = () => {
     nft.landedTimestamp = new Date().getTime();
   };
 
-  const { isOpen, toggle } = useModal();
-
   const renderer = ({ minutes, seconds }: any) => {
     return (
       <h3 style={{ fontFamily: "poppins" }}>{`${zeroPad(minutes)}m${zeroPad(
@@ -497,13 +502,15 @@ export const App = () => {
               width={400}
               src={"../src/assets/logoHackhaton.png"}
             />
-            <p className="test">Prove that you own the address</p>
+            <p className="test">
+              Prove that you own the address and start competing
+            </p>
 
             <button
               className="connectButton"
               onClick={async () => await signMessage()}
             >
-              Verify Address
+              Import your NFTs !{" "}
             </button>
             <button
               className="disconnectButton"
