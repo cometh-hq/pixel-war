@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
@@ -20,6 +19,11 @@ library MPT {
     bytes32 codeHash;
   }
 
+  struct StorageSlot {
+    uint256 position;
+    uint256 value;
+  }
+
   // [nonce,balance,storageRoot,codeHash]
   function verifyAccount(bytes32 root, Account memory account, bytes[] memory proof) internal pure returns (bool) {
     uint256 key = uint256(keccak256(abi.encodePacked(account.accountAddress)));
@@ -37,12 +41,12 @@ library MPT {
     return true;
   }
 
-  function verifyStorageSlot(bytes32 root, uint256 contractSlot, uint256 contractValue, bytes[] memory proof) internal pure returns (bool) {
-    uint256 key = uint256(keccak256(abi.encode(contractSlot)));
+  function verifyStorageSlot(bytes32 root, StorageSlot memory slot, bytes[] memory proof) internal pure returns (bool) {
+    uint256 key = uint256(keccak256(abi.encode(slot.position)));
 
     bytes memory leaf = verifyLeaf(root, key, proof);
     
-    return contractValue == leaf.toRlpItem().toUint();
+    return slot.value == leaf.toRlpItem().toUint();
   }
 
   function verifyLeaf(bytes32 root, uint256 key, bytes[] memory proof) internal pure returns (bytes memory result) {
