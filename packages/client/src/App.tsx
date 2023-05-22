@@ -2,7 +2,6 @@ import "./styles.css";
 import ConnectWallet from "./component/ConnectWallet";
 import DisconnectWallet from "./component/disconnectWallet";
 import Grid from "./component/grid";
-import { SiweMessage } from "siwe";
 import { useMUD } from "./MUDContext";
 import { Networks, ETHEREUM_MAINNET } from "./utils/Networks";
 
@@ -15,7 +14,7 @@ export const App = () => {
   const [{ connectedChain }, setChain] = useSetChain();
 
   const [signer, setSigner] = useState<ethers.Signer | null>(null);
-  const [mudAddress, setMudAddress] = useState<string | undefined>("");
+  const [mudAddress, setMudAddress] = useState<string>("");
   const [hasSigned, setHasSigned] = useState<boolean>(false);
 
   const {
@@ -59,41 +58,19 @@ export const App = () => {
 
   const getMudSignerAddress = async (): Promise<void> => {
     const mudSignerAddress = await network.signer.get()?.getAddress();
+    if (!mudSignerAddress) {
+      alert("mud signer address is undefined ");
+      return;
+    }
     setMudAddress(mudSignerAddress);
   };
 
-  const createMessage = (nonce: string): SiweMessage => {
-    if (!window || !wallet) {
-      throw new Error("No window nor wallet");
-    }
-
-    const domain = window.location.host;
-    const uri = window.location.origin;
-
-    const message = new SiweMessage({
-      domain,
-      uri,
-      statement: `Sign in with Ethereum to PFP War as ${mudAddress}`,
-      address: ethers.utils.getAddress(wallet?.accounts[0].address),
-      version: "1",
-      chainId: 1,
-      nonce,
-    });
-
-    return message;
-  };
-
   const signMessage = async (): Promise<void> => {
-    const nonce = `${crypto.randomUUID().replace(/-/g, "")}`;
-    const message = createMessage(nonce);
-    const messageToSign = message.prepareMessage();
-    const signature = await signer!.signMessage(messageToSign);
+    const message = ethers.utils.hashMessage(mudAddress);
 
     try {
-      await message.verify({
-        signature,
-        nonce: nonce,
-      });
+      const signature = await signer!.signMessage(message);
+      localStorage.setItem("signature", signature);
       setHasSigned(true);
     } catch (error) {
       alert("The signature is wrong");

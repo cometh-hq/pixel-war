@@ -3,7 +3,7 @@ import { useMUD } from "../MUDContext";
 import Modal from "../component/modal";
 import DisconnectWallet from "./disconnectWallet";
 import useModal from "../../src/hooks/useModal";
-
+import { trunc } from "../utils/format";
 import {
   Network,
   Alchemy,
@@ -12,6 +12,7 @@ import {
   Nft,
 } from "alchemy-sdk";
 import { useState, useEffect } from "react";
+import { useConnectWallet } from "@web3-onboard/react";
 import { ethers } from "ethers";
 
 const Grid = () => {
@@ -19,6 +20,7 @@ const Grid = () => {
     apiKey: import.meta.env.VITE_ALCHEMY_APY_KEY, // Replace with your Alchemy API Key.
     network: Network.ETH_MAINNET, // Replace with your network.
   };
+  const [{ wallet }] = useConnectWallet();
 
   const alchemy = new Alchemy(settings);
   const [userAddress, setUserAddress] = useState(
@@ -81,6 +83,10 @@ const Grid = () => {
 
   useEffect(() => {
     initData();
+    if (wallet) {
+      setUserAddress(wallet?.accounts[0].address);
+      loadPlayerNft(userAddress);
+    }
   }, [mapLands]);
 
   const initData = async (): Promise<void> => {
@@ -115,10 +121,9 @@ const Grid = () => {
   const { isOpen, toggle } = useModal();
 
   return (
-    <>
+    <div className="gridContainer">
       <Modal isOpen={isOpen} toggle={toggle}>
         <h2>Select Your Nft</h2>
-
         {userNFTs.map((nft) => (
           <div>
             <button
@@ -141,25 +146,12 @@ const Grid = () => {
           </div>
         ))}
       </Modal>
-      <div>
-        Play As{" "}
-        <input
-          name="playAsInput"
-          value={userAddress}
-          onChange={(evt) => setUserAddress(evt.target.value)}
-        />
-        <button
-          type="button"
-          onClick={async (event) => {
-            event.preventDefault();
-            loadPlayerNft(userAddress);
-          }}
-        >
-          Play
-        </button>
+      <div className="profile">
+        <span>{trunc(userAddress)}</span>
+        <DisconnectWallet />
       </div>
       <br />
-      <DisconnectWallet />
+
       <br />
       <br />
       <div className="grid">
@@ -181,7 +173,7 @@ const Grid = () => {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 
