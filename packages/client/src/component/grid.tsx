@@ -29,6 +29,7 @@ const Grid = () => {
 
   type NftWithPosition = OwnedNft & {
     landedTimestamp: number;
+    imageUrl: string;
   };
 
   const [userNFTs, setUserNFTs] = useState<NftWithPosition[]>([]);
@@ -68,6 +69,7 @@ const Grid = () => {
       });
 
       let landedTimestamp = 0;
+      const imageUrl = nft.media[0]?.thumbnail ? nft.media[0]!.thumbnail : "";
       if (nftPosition.length > 0) {
         const position = nftPosition[0];
         landedTimestamp = parseInt(position.value.landedDate.toString()) * 1000;
@@ -78,6 +80,7 @@ const Grid = () => {
       return {
         ...nft,
         landedTimestamp: landedTimestamp,
+        imageUrl: imageUrl,
       };
     });
 
@@ -120,7 +123,7 @@ const Grid = () => {
       selectedLand[1],
       nft!.contract.address,
       nft!.tokenId,
-      nft!.media[0]?.thumbnail,
+      nft!.imageUrl,
       signature,
       userAddress
     );
@@ -145,11 +148,7 @@ const Grid = () => {
               }}
             >
               <span>
-                <img
-                  style={{ padding: "4px" }}
-                  width={50}
-                  src={nft.media[0].thumbnail}
-                />
+                <img style={{ padding: "4px" }} width={50} src={nft.imageUrl} />
               </span>
             </button>
           </div>
