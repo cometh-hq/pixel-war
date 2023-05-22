@@ -66,10 +66,19 @@ export const App = () => {
   };
 
   const signMessage = async (): Promise<void> => {
-    const message = ethers.utils.hashMessage(mudAddress);
-
     try {
-      const signature = await signer!.signMessage(message);
+      const message = ethers.utils.defaultAbiCoder.encode(
+        ["address"],
+        [mudAddress]
+      );
+      console.log(
+        "MESSAGE",
+        ethers.utils.hashMessage(ethers.utils.arrayify(message))
+      );
+
+      const signature = await signer!.signMessage(
+        ethers.utils.arrayify(message)
+      );
       localStorage.setItem("signature", signature);
       setHasSigned(true);
     } catch (error) {

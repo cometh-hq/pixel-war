@@ -38,7 +38,7 @@ const Grid = () => {
 
   const {
     systemCalls: { claimLand },
-    network: { storeCache },
+    network: { storeCache, network },
   } = useMUD();
 
   const mapLands = useRows(storeCache, { table: "MapLand" });
@@ -108,12 +108,18 @@ const Grid = () => {
 
   const claim = async (nft: NftWithPosition): Promise<void> => {
     console.log(selectedLand[0]);
+    const signature = window.localStorage.getItem("signature");
+    const mudSignerAddress = await network.signer.get()?.getAddress();
+    console.log(signature, mudSignerAddress, userAddress);
+
     await claimLand(
       selectedLand[0],
       selectedLand[1],
       nft!.contract.address,
       nft!.tokenId,
-      nft!.media[0]?.thumbnail
+      nft!.media[0]?.thumbnail,
+      signature,
+      userAddress
     );
     nft.landedTimestamp = new Date().getTime();
   };

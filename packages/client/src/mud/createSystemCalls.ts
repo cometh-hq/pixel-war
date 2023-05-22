@@ -20,9 +20,19 @@ export function createSystemCalls(
     y: number,
     tokenAddress: string,
     tokenId: string,
-    image: string
+    image: string,
+    signature: string,
+    account: string
   ) => {
-    const tx = await worldSend("claim", [x, y, tokenAddress, tokenId, image]);
+    const tx = await worldSend("claim", [
+      x,
+      y,
+      tokenAddress,
+      tokenId,
+      image,
+      signature,
+      account,
+    ]);
     await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash);
   };
 
