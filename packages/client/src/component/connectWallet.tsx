@@ -23,9 +23,9 @@ const ConnectWallet = () => {
         width={700}
         src={"../src/assets/logoHackhaton.png"}
       />
-      <p className="test">
-        Take the L2 space with NFTs you own in L1 (no bridge needed, everything
-        works with storage proof)
+      <p>
+        Take the L2 space with NFTs you own in L1 <br></br> (no bridge needed,
+        everything works with storage proof){" "}
       </p>
       <a href="#" rel="noopener noreferrer" target="_blank">
         more infos

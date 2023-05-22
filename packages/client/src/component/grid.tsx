@@ -133,7 +133,7 @@ const Grid = () => {
               <span>
                 <img
                   style={{ padding: "4px" }}
-                  width={33}
+                  width={50}
                   src={nft.media[0].thumbnail}
                 />
               </span>

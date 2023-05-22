@@ -15,7 +15,11 @@
 }
 
 .modal-box {
-  display: block;
+  font-family: "poppins";
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   background: white;
   width: 70%;
   height: 70%;
@@ -28,6 +32,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
 }
 
 .connectButton {
