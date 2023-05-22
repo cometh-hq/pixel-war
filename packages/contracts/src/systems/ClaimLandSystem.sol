@@ -12,14 +12,9 @@ contract ClaimLandSystem is System {
 
   error Debug(bytes32 message);
   
-  function claim(uint32 x, uint32 y, address tokenAddress, uint256 tokenId, string memory image, bytes memory signature, address account) public {
+  function claim(uint32 x, uint32 y, address tokenAddress, uint256 tokenId, string memory image) public {
 
-    bytes32 message = abi.encode(_msgSender()).toEthSignedMessageHash();
-
-
-    require(message.recover(signature) == account, "invalid signature");
-
-    NftPositionData memory playedNftPosition = NftPosition.get(tokenAddress, tokenId);
+     NftPositionData memory playedNftPosition = NftPosition.get(tokenAddress, tokenId);
 
     uint256 timeDiff = block.timestamp - playedNftPosition.landedDate;
     require(timeDiff >= 60, "Nft claimed less than one minute ago");

@@ -23,7 +23,7 @@ export function createSystemCalls(
     signature: string,
     storageRoot: string,
     stateProof: string[],
-    storageProof: string[],
+    storageProof: string[]
   ) => {
     const tx = await worldSend("claimGhoul", [
       x,
@@ -33,7 +33,7 @@ export function createSystemCalls(
       signature,
       storageRoot,
       stateProof,
-      storageProof
+      storageProof,
     ]);
 
     const receipt = await tx.wait();
@@ -47,19 +47,9 @@ export function createSystemCalls(
     y: number,
     tokenAddress: string,
     tokenId: string,
-    image: string,
-    signature: string,
-    account: string
+    image: string
   ) => {
-    const tx = await worldSend("claim", [
-      x,
-      y,
-      tokenAddress,
-      tokenId,
-      image,
-      signature,
-      account,
-    ]);
+    const tx = await worldSend("claim", [x, y, tokenAddress, tokenId, image]);
     await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash);
   };
 

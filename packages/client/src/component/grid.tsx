@@ -209,9 +209,7 @@ const Grid = () => {
         selectedLand[1],
         nft!.contract.address,
         nft!.tokenId,
-        nft!.imageUrl,
-        signature,
-        userAddress
+        nft!.imageUrl
       );
     }
 
