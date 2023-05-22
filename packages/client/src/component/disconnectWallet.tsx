@@ -8,6 +8,7 @@ const DisconnectWallet = () => {
       disconnect(wallet);
     }
     window.localStorage.removeItem("selectedWallet");
+    window.localStorage.removeItem("signature");
   };
 
   return (

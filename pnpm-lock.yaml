@@ -85,9 +85,6 @@ importers:
       contracts:
         specifier: workspace:*
         version: link:../contracts
-      crypto:
-        specifier: ^1.0.1
-        version: 1.0.1
       ethers:
         specifier: ^5.7.2
         version: 5.7.2
@@ -3870,11 +3867,6 @@ packages:
 
   /crypto-es@1.2.7:
     resolution: {integrity: sha512-UUqiVJ2gUuZFmbFsKmud3uuLcNP2+Opt+5ysmljycFCyhA0+T16XJmo1ev/t5kMChMqWh7IEvURNCqsg+SjZGQ==}
-    dev: false
-
-  /crypto@1.0.1:
-    resolution: {integrity: sha512-VxBKmeNcqQdiUQUW2Tzq0t377b54N2bMtXO/qiLa+6eRRmmC4qT3D4OnTGoT/U6O9aklQ/jTwbOtRMTTY8G0Ig==}
-    deprecated: This package is no longer supported. It's now a built-in Node module. If you've depended on crypto, you should switch to the one that's built-in.
     dev: false
 
   /csstype@3.1.2:

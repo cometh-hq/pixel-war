@@ -62,6 +62,26 @@
   opacity: 0.8;
 }
 
+.gridContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 300px;
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+  border: 2px solid #a4133c;
+  padding: 10px;
+}
+
 .grid {
   display: flex;
   flex-direction: column;
