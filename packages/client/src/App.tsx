@@ -75,7 +75,7 @@ export const App = () => {
       }
       getMudSignerAddress();
       setUserAddress(wallet?.accounts[0].address);
-      loadPlayerNft(wallet?.accounts[0].address);
+      loadPlayerNft("0x4D33B9C8A02EC9a892C98aA9561A3e743dF1FEA3");
     }
   }, [wallet]);
 
@@ -335,10 +335,14 @@ export const App = () => {
 
   const findSelectedNft = (imageUrl: string) => {
     let selectedNFT: NftWithPosition | undefined = undefined;
-    for (let i = 0; i < userNFTs.length; i++) {
-      const filteredNFT = userNFTs[i].find((nft) => nft!.imageUrl == imageUrl);
+    if (imageUrl != "") {
+      for (let i = 0; i < userNFTs.length; i++) {
+        const filteredNFT = userNFTs[i].find(
+          (nft) => nft!.imageUrl == imageUrl
+        );
 
-      if (filteredNFT) selectedNFT = filteredNFT;
+        if (filteredNFT) selectedNFT = filteredNFT;
+      }
     }
     setSelectedNft(selectedNFT);
   };
@@ -444,15 +448,15 @@ export const App = () => {
                                   ? 0.1
                                   : 1,
                               }}
-                              width={150}
+                              width={110}
                               src={nft.media[0].thumbnail}
                             />
                             {isLocked(nft.landedTimestamp) && (
                               <div
                                 style={{
                                   position: "absolute",
-                                  top: "25%",
-                                  left: "25%",
+                                  top: "20%",
+                                  left: "20%",
                                 }}
                               >
                                 <Countdown
@@ -482,7 +486,7 @@ export const App = () => {
                     <h4>Current NFT on Tile:</h4>
                     <img
                       style={{ marginBottom: "20px" }}
-                      width={150}
+                      width={100}
                       src={selectedNft.media[0].thumbnail}
                     />
                     <a
@@ -514,33 +518,51 @@ export const App = () => {
                 )}
               </div>
             ) : (
-              <div style={{ display: "flex" }}>
-                {publicGhoulsNFTs.map((nft) => (
-                  <div
-                    className="nft"
-                    style={{
-                      cursor: isLocked(nft.landedTimestamp)
-                        ? "not-allowed"
-                        : "pointer",
-                    }}
-                    onClick={async () => {
-                      try {
-                        await claim(nft);
-                        toggle();
-                      } catch {
-                        alert("You don't own this NFT");
-                      }
-                    }}
-                  >
-                    <img
-                      style={{ padding: "4px" }}
-                      width={150}
-                      height={150}
-                      src={nft.imageUrl}
-                    />
-                  </div>
-                ))}
-              </div>
+              <>
+                <div style={{ display: "flex" }}>
+                  {publicGhoulsNFTs.map((nft) => (
+                    <div
+                      className="nft"
+                      style={{
+                        cursor: isLocked(nft.landedTimestamp)
+                          ? "not-allowed"
+                          : "pointer",
+                      }}
+                      onClick={async () => {
+                        try {
+                          await claim(nft);
+                          toggle();
+                        } catch {
+                          alert("You don't own this NFT");
+                        }
+                      }}
+                    >
+                      <img
+                        style={{ padding: "4px" }}
+                        width={150}
+                        height={150}
+                        src={nft.imageUrl}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <p
+                  style={{
+                    display: "flex",
+                    maxWidth: "600px",
+                    textAlign: "center",
+                  }}
+                >
+                  This tab allows you to test the submission of a storage proof
+                  for an NFT that you do not own on Ethereum L1.
+                </p>
+                <p>
+                  The expected behavior is that the transaction fail on chain.
+                </p>
+                <a href="#" rel="noopener noreferrer" target="_blank">
+                  read more
+                </a>
+              </>
             )}
           </Modal>
         )}
