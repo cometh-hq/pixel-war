@@ -608,9 +608,6 @@ export const App = () => {
                   Connect your Wallet
                 </button>
               )}
-              <button className="niceButton" onClick={() => displayState()}>
-                debug
-              </button>
             </div>
           </div>
           <div className="board">
