@@ -29,6 +29,83 @@ You can have a look to the [Pixel Wars Contracts README](https://github.com/come
 
 We wrote a detailed technical [article](https://medium.com/@vincentlg/pfp-war-project-use-the-l1-state-on-optimism-l2-with-storage-proof-fc0124db7caf) on how we did this.
 
+## What we have done
+
+### Ethereum Merkle Patricia Trie proof verifier:  
+
+The Ethereum state is a data structure (a modified [Merkle Patricia Trie](https://ethereum.org/en/developers/docs/data-structures-and-encoding/patricia-merkle-trie/)) which keeps all accounts (nonce, balance, codeHash, storageRoot) linked by hashes and reducible to a single root hash stored on the blockchain.
+
+solidity ([contracts](https://github.com/cometh-game/pixel-war/tree/master/packages/contracts/src/libs))
+
+### PFP War: A web game that uses our verifier:** 
+
+MUD ([MUD client](https://github.com/cometh-game/pixel-war/tree/master/packages/contracts/src/libs))
+
+### A op-geth precompile of this verifier: 
+
+GO ([this repo](https://github.com/Kelvyne/op-geth/))**
+
+The verification of MPT is not available on EVM so we decided to make a precompile to simplify the verification of such trie on smartcontract.
+
+You can have a look to [the commit of our modification on op-get](https://github.com/Kelvyne/op-geth/commit/d1f21853b1e4548370c8bff9c9645415515b205d)
+
+
+**core/vm/contracts.go**
+
+We added a precompile to verify the MPT at address 0x92
+```
+common.BytesToAddress([]byte{0x92}): &mptVerify{},
+
+```
+
+We need to format our data to make it compatible with the native Geth Method
+
+```
+func (c *mptVerify) Run(input []byte) ([]byte, error) {
+  // [root <32 bytes>, key <32 bytes>, proof <32 bytes length><n bytes arrays prefixed with length>]
+
+  if len(input) < 96 {
+    return nil, errMptVerifyInvalidInput
+  }
+
+  uint256Ty, _ := abi.NewType("uint256", "", nil)
+  bytesArrTy, _ := abi.NewType("bytes[]", "", nil)
+
+  arguments := abi.Arguments{
+    abi.Argument{ Name: "root", Type: uint256Ty },
+    abi.Argument{ Name: "key", Type: uint256Ty },
+    abi.Argument{ Name: "proof", Type: bytesArrTy },
+  }
+
+  r, err := arguments.Unpack(input)
+  if err != nil {
+    return nil, errMptVerifyInvalidInput
+  }
+
+  root, _ := r[0].(*big.Int)
+  key, _ := r[1].(*big.Int)
+  proof, _ := r[2].([][]byte)
+
+  proofKv := mappingKeyValue{}
+  for _, step := range proof {
+    hash := crypto.Keccak256(step)
+    proofKv[string(hash)] = step
+  }
+
+  v, err := trie.VerifyProof(common.BigToHash(root), key.Bytes(), proofKv)
+  if err != nil {
+    return nil, errMptVerifyInvalidInput
+  }
+
+  var rlpDecoded []byte
+  if err = rlp.DecodeBytes(v, &rlpDecoded); err != nil {
+    return nil, err
+  }
+  return rlpDecoded, nil
+}
+```
+
+
 ## About the hackathon
 
 **About Optimism and Storage proof**
