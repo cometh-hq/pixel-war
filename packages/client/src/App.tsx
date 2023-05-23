@@ -383,7 +383,7 @@ export const App = () => {
                     setModalMenu("classic");
                   }}
                 >
-                  Classic
+                  Play with my NFTs
                 </span>
                 <span
                   className="submenu"
@@ -398,7 +398,7 @@ export const App = () => {
                     setModalMenu("experimental");
                   }}
                 >
-                  Experimental
+                  Try with NFTs I don't own
                 </span>
               </div>
               <div
