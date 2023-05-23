@@ -76,7 +76,7 @@ export const App = () => {
       }
       getMudSignerAddress();
       setUserAddress(wallet?.accounts[0].address);
-      loadPlayerNft(wallet?.accounts[0].address);
+      loadPlayerNft("jdetychey.eth");
     }
   }, [wallet]);
 
@@ -351,6 +351,7 @@ export const App = () => {
         },
       },
     });
+    console.log(selectedNFT[0]);
 
     if (selectedNFT[0]) {
       setSelectedNft(selectedNFT[0].value);
@@ -483,7 +484,7 @@ export const App = () => {
                     </div>
                   ))}
                 </div>
-                {selectedNft && (
+                {selectedNft?.tokenId && (
                   <div
                     style={{
                       display: "flex",
@@ -501,6 +502,7 @@ export const App = () => {
                       width={100}
                       src={selectedNft?.image}
                     />
+
                     <a
                       href={`https://opensea.io/assets/ethereum/${
                         selectedNft?.tokenAddress
