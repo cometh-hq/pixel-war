@@ -642,7 +642,7 @@ export const App = () => {
                 <img
                   style={{ padding: "4px" }}
                   width={400}
-                  src={"../src/assets/logoHackhaton.png"}
+                  src={"/logoHackhaton.png"}
                 />
                 <p>
                   Take the L2 space with NFTs you own in L1 <br></br> (no bridge
@@ -672,7 +672,7 @@ export const App = () => {
             <img
               style={{ padding: "4px" }}
               width={400}
-              src={"../src/assets/logoHackhaton.png"}
+              src={"/logoHackhaton.png"}
             />
             <p className="test">
               Prove that you own the address and start competing
