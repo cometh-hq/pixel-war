@@ -405,11 +405,19 @@ export const App = () => {
                 style={{
                   display: "flex",
                   flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "flex-start",
                   overflow: "hidden",
                   width: "100%",
                 }}
               >
-                <div className="nftModal" style={{ overflow: "scroll" }}>
+                <div
+                  className="nftModal"
+                  style={{
+                    overflow: "scroll",
+                    width: selectedNft ? "80%" : "100%",
+                  }}
+                >
                   {userNFTs.map((row: any, i: number) => (
                     <div className="row" key={i}>
                       {row.map((nft: any) => (
@@ -466,30 +474,39 @@ export const App = () => {
                       flexDirection: "column",
                       justifyContent: "flex-start",
                       alignItems: "center",
-                      backgroundColor: "lightgray",
                       width: "30%",
                       marginLeft: "10px",
+                      paddingTop: "10px",
                     }}
                   >
+                    <h4>Current NFT on Tile:</h4>
                     <img
-                      style={{ marginBottom: "10px" }}
+                      style={{ marginBottom: "20px" }}
                       width={150}
                       src={selectedNft.media[0].thumbnail}
                     />
                     <a
-                      href={`https://opensea.io/assets/${selectedNft.contract.address}/${selectedNft.tokenId}`}
+                      href={`https://opensea.io/assets/ethereum/${selectedNft.contract.address}/${selectedNft.tokenId}`}
                       rel="noopener noreferrer"
                       target="_blank"
-                      style={{ textDecoration: "none" }}
+                      style={{ textDecoration: "none", color: "black" }}
                     >
                       <div
                         style={{
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
+                          marginBottom: "10px",
                         }}
                       >
-                        <img src={"opensea.svg"} width={20} />
+                        <img
+                          src={"opensea.svg"}
+                          width={20}
+                          style={{
+                            filter: "invert() grayscale()",
+                            marginRight: "5px",
+                          }}
+                        />
                         {selectedNft.title}
                       </div>
                     </a>
