@@ -76,7 +76,7 @@ export const App = () => {
       }
       getMudSignerAddress();
       setUserAddress(wallet?.accounts[0].address);
-      loadPlayerNft("0x4D33B9C8A02EC9a892C98aA9561A3e743dF1FEA3");
+      loadPlayerNft(wallet?.accounts[0].address);
     }
   }, [wallet]);
 
@@ -107,7 +107,6 @@ export const App = () => {
     undefined
   );
   const [selectedLand, setSelectedLand] = useState<any>([]);
-  const [loading, setLoading] = useState<boolean>();
   const { isOpen, toggle } = useModal();
 
   const debug = async (): Promise<void> => {
@@ -285,7 +284,6 @@ export const App = () => {
   };
 
   const claim = async (nft: NftWithPosition): Promise<void> => {
-    setLoading(true);
     console.log(selectedLand[0]);
     const signature = window.localStorage.getItem("signature");
     const mudSignerAddress = await network.signer.get()?.getAddress();
@@ -332,7 +330,6 @@ export const App = () => {
     }
 
     nft.landedTimestamp = new Date().getTime();
-    setLoading(false);
   };
 
   const renderer = ({ minutes, seconds }: any) => {
@@ -587,20 +584,7 @@ export const App = () => {
         <div className="grid">
           <div className="headerBox">
             <img width={120} src={"/pfpWeb3Onboard.png"} />
-            {loading && (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <p style={{ marginRight: "5px", fontFamily: "poppins" }}>
-                  Processing
-                </p>
-                <div className="loader"></div>
-              </div>
-            )}
+
             <div className="profileBox">
               {wallet ? (
                 <>
