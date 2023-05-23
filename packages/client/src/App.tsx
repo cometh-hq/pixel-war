@@ -1,5 +1,5 @@
 import "./styles.css";
-import { useRows } from "@latticexyz/react";
+import { useComponentValue, useRows } from "@latticexyz/react";
 import { useMUD } from "./MUDContext";
 import Modal from "./component/modal";
 import useModal from "./../src/hooks/useModal";
@@ -29,12 +29,13 @@ export const App = () => {
   const [{ connectedChain }, setChain] = useSetChain();
 
   const {
+    components: { LoadingState },
     systemCalls: { claimLand, claimGhoul },
-    network: { storeCache, network },
+    network: { storeCache, network, singletonEntity },
   } = useMUD();
 
   const mapLands = useRows(storeCache, { table: "MapLand" });
-
+  const loadingState = useComponentValue(LoadingState, singletonEntity);
   useEffect(() => {
     const previouslyConnectedWallets =
       window.localStorage.getItem("selectedWallet");
@@ -84,6 +85,7 @@ export const App = () => {
     loadPublicGhoulsNFTs();
   }, [mapLands]);
 
+  let interval: any = undefined;
   const alchemy = new Alchemy(settings);
   const [userAddress, setUserAddress] = useState(
     "0x4D33B9C8A02EC9a892C98aA9561A3e743dF1FEA3"
@@ -108,6 +110,16 @@ export const App = () => {
   );
   const [selectedLand, setSelectedLand] = useState<any>([]);
   const { isOpen, toggle } = useModal();
+
+  const debug = async (): Promise<void> => {
+    if (!interval) {
+      console.log("############ ");
+      interval = setInterval(displayState, 1000);
+    }
+  };
+  const displayState = async (): Promise<void> => {
+    console.log("LOAD STATE", loadingState?.msg, loadingState?.state);
+  };
 
   const connectWallet = async (): Promise<void> => {
     toggle();
@@ -255,6 +267,7 @@ export const App = () => {
   };
 
   const initData = async (): Promise<void> => {
+    console.log("##### mapLands", mapLands);
     const boardHeight = 20;
     const boardLength = 30;
     const emptyBoard: any = [];
@@ -573,6 +586,9 @@ export const App = () => {
                   Connect your Wallet
                 </button>
               )}
+              <button className="niceButton" onClick={() => displayState()}>
+                debug
+              </button>
             </div>
           </div>
           <div className="board">
