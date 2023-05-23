@@ -570,7 +570,11 @@ export const App = () => {
                 <p>
                   The expected behavior is that the transaction fail on chain.
                 </p>
-                <a href="#" rel="noopener noreferrer" target="_blank">
+                <a
+                  href="https://medium.com/@vincentlg/pfp-war-project-use-the-l1-state-on-optimism-l2-with-storage-proof-fc0124db7caf"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
                   read more
                 </a>
               </>
@@ -642,7 +646,11 @@ export const App = () => {
                 <p>
                   Take the L2 space with NFTs you own in L1 <br></br> (no bridge
                   or oracle needed, everything works with storage proof{" "}
-                  <a href="#" rel="noopener noreferrer" target="_blank">
+                  <a
+                    href="https://medium.com/@vincentlg/pfp-war-project-use-the-l1-state-on-optimism-l2-with-storage-proof-fc0124db7caf"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
                     read more
                   </a>
                   ){" "}
