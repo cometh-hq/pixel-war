@@ -37,7 +37,7 @@ The Ethereum state is a data structure (a modified [Merkle Patricia Trie](https:
 
 solidity ([contracts](https://github.com/cometh-game/pixel-war/tree/master/packages/contracts/src/libs))
 
-### PFP War: A web game that uses our verifier:** 
+### PFP War: A web game that uses our verifier:
 
 MUD ([MUD client](https://github.com/cometh-game/pixel-war/tree/master/packages/contracts/src/libs))
 
