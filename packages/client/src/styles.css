@@ -156,6 +156,9 @@ div#react-root {
   margin-bottom: 30px;
 }
 .headerBox {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   width: 100%;
   border-bottom: 1px solid gray;
   margin-bottom: 8px;
@@ -216,4 +219,35 @@ div#react-root {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+}
+
+.loader {
+  width: 2em;
+  height: 0.66em;
+  border: 0.05em currentcolor solid;
+  border-radius: 0.1em;
+  background: linear-gradient(
+    -60deg,
+    transparent 0%,
+    transparent 50%,
+    currentcolor 50%,
+    currentcolor 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 1em 2em;
+  background-position: 0 0;
+  animation: loader-42 0.8s infinite linear;
+}
+@keyframes loader-42 {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -2em 0;
+  }
+}
+
+.box:nth-of-type(n + 43) {
+  display: none;
 }
