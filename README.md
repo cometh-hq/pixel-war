@@ -5,9 +5,14 @@ It's inspired from r/place by Reddit a 3.5-day experiment with 160 million pixel
 
 ![Cover](cover.png)
 
-## This project was build for ETHGLobal Autonomous wordl Hackathon
+## Key Takaways
+* [Live demo](https://tranquil-malasada-165ce6.netlify.app/)
+* [PFP WAR - ETH GLobal Official page](https://ethglobal.com/showcase/pfp-war-hccpt)
+* [Medium Article About PFP WAR Storage Proof](https://medium.com/@vincentlg/pfp-war-project-use-the-l1-state-on-optimism-l2-with-storage-proof-fc0124db7caf)
 
-[ETHGLobal Autonomous wordl Hackathon Event](https://ethglobal.com/events/autonomous)
+## This project was build for ETHGLobal Autonomous world Hackathon
+
+[ETHGLobal Autonomous world Hackathon Event](https://ethglobal.com/events/autonomous)
 
 **Our interpretation of an Autonomous World**
   * Trustless
@@ -31,13 +36,13 @@ You can have a look to the [Pixel Wars Contracts README](https://github.com/come
 
 We wrote a detailed technical [article](https://medium.com/@vincentlg/pfp-war-project-use-the-l1-state-on-optimism-l2-with-storage-proof-fc0124db7caf) on how we did this.
 
-## What we have done
+## What have we done
 
 ### Ethereum Merkle Patricia Trie proof verifier:  
 
 The Ethereum state is a data structure (a modified [Merkle Patricia Trie](https://ethereum.org/en/developers/docs/data-structures-and-encoding/patricia-merkle-trie/)) which keeps all accounts (nonce, balance, codeHash, storageRoot) linked by hashes and reducible to a single root hash stored on the blockchain.
 
-solidity ([contracts](https://github.com/cometh-game/pixel-war/tree/master/packages/contracts/src/libs))
+Solidity ([contracts](https://github.com/cometh-game/pixel-war/tree/master/packages/contracts/src/libs))
 
 ### PFP War: A web game that uses our verifier:
 
@@ -126,7 +131,7 @@ Binding between UI and contract state is realy cool
 
 **About EthGlobal**
 
-Top organization and Guidance / Top resources
+Top organization and Guidance / Top ressources
 
 **About life**
 
