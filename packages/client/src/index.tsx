@@ -6,6 +6,11 @@ import { MUDProvider } from "./MUDContext";
 import { Web3OnboardProvider } from "@web3-onboard/react";
 import web3Onboard from "./services/web3-onboard";
 import "@fontsource/poppins";
+import "@fontsource/poppins/500.css";
+import "@fontsource/poppins/600.css";
+import "@fontsource/poppins/700.css";
+import "@fontsource/poppins/800.css";
+import "@fontsource/poppins/900.css";
 
 const rootElement = document.getElementById("react-root");
 if (!rootElement) throw new Error("React root not found");

@@ -52,16 +52,14 @@ export const App = () => {
     }
   }, []);
 
-  const toggleAfterConnection = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    toggle();
-  };
-
   useEffect(() => {
     if (wallet) {
       const signature = localStorage.getItem("signature");
       if (!signature) {
-        toggleAfterConnection();
+        (async () => {
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+          toggle();
+        })();
       }
       setSignature(signature!);
       localStorage.setItem("selectedWallet", JSON.stringify(wallet?.label));
@@ -96,6 +94,7 @@ export const App = () => {
   const [publicGhoulsNFTs, setPublicGhoulsNFTs] = useState<NftWithPosition[]>(
     []
   );
+  const [modalMenu, setModalMenu] = useState<string>("classic");
 
   type NftWithPosition = OwnedNft & {
     landedTimestamp: number;
@@ -104,7 +103,9 @@ export const App = () => {
 
   const [userNFTs, setUserNFTs] = useState<Array<NftWithPosition[]>>([]);
   const [board, setBoard] = useState<any>([]);
-  const [selectedNft, setSelectedNft] = useState<NftWithPosition | null>(null);
+  const [selectedNft, setSelectedNft] = useState<NftWithPosition | undefined>(
+    undefined
+  );
   const [selectedLand, setSelectedLand] = useState<any>([]);
   const { isOpen, toggle } = useModal();
 
@@ -200,10 +201,6 @@ export const App = () => {
 
   const loadPlayerNft = async (playerAddress: string) => {
     console.log("LOADING Player ", playerAddress);
-
-    /*const options: GetNftsForOwnerOptions = {
-      contractAddresses: ["0xef1a89cbfabe59397ffda11fc5df293e9bc5db90"],
-    };*/
 
     const nftsForOwner = await alchemy.nft.getNftsForOwner(playerAddress);
 
@@ -316,9 +313,9 @@ export const App = () => {
 
   const renderer = ({ minutes, seconds }: any) => {
     return (
-      <h3 style={{ fontFamily: "poppins" }}>{`${zeroPad(minutes)}m${zeroPad(
-        seconds
-      )}s`}</h3>
+      <h3 style={{ fontFamily: "poppins", fontSize: "800" }}>{`${zeroPad(
+        minutes
+      )}m${zeroPad(seconds)}s`}</h3>
     );
   };
 
@@ -326,95 +323,198 @@ export const App = () => {
     return new Date().getTime() - timestamp <= 60 * 1000;
   };
 
+  const findSelectedNft = (imageUrl: string) => {
+    let selectedNFT: NftWithPosition | undefined = undefined;
+    for (let i = 0; i < userNFTs.length; i++) {
+      const filteredNFT = userNFTs[i].find((nft) => nft!.imageUrl == imageUrl);
+
+      if (filteredNFT) selectedNFT = filteredNFT;
+    }
+    setSelectedNft(selectedNFT);
+  };
+
   return (
     <>
       <div className="gridContainer">
         {wallet && signature && (
           <Modal isOpen={isOpen} toggle={toggle}>
-            <h2 style={{ fontFamily: "poppins", fontSize: "800" }}>
-              Select Your Nft
-            </h2>
-
-            <div style={{ display: "flex" }}>
-              {/*  {publicGhoulsNFTs.map((nft) => (
-              <div>
-                <div
-                  className="nft"
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <div className="modalSubMenu">
+                <span
+                  className="submenu"
                   style={{
-                    pointerEvents:
-                      new Date().getTime() - nft.landedTimestamp <= 60 * 1000
-                        ? "auto"
-                        : "none",
+                    marginRight: "15px",
+                    fontSize: "12px",
+                    fontWeight: modalMenu == "classic" ? 700 : 400,
+                    textDecoration:
+                      modalMenu == "classic" ? "underline" : "none",
                   }}
-                  onClick={async () => {
-                    try {
-                      setSelectedNft(nft);
-                      await claim(nft);
-                      toggle();
-                    } catch {
-                      alert("You don't own this NFT");
-                    }
+                  onClick={() => {
+                    setModalMenu("classic");
                   }}
                 >
-                  <img
-                    style={{ padding: "4px" }}
-                    width={150}
-                    height={150}
-                    src={nft.imageUrl}
-                  />
-                </div>
+                  Classic
+                </span>
+                <span
+                  className="submenu"
+                  style={{
+                    marginRight: "10px",
+                    fontSize: "12px",
+                    fontWeight: modalMenu == "experimental" ? 700 : 400,
+                    textDecoration:
+                      modalMenu == "experimental" ? "underline" : "none",
+                  }}
+                  onClick={() => {
+                    setModalMenu("experimental");
+                  }}
+                >
+                  Experimental
+                </span>
               </div>
-            ))} */}
+              <div
+                className="cross"
+                onClick={() => {
+                  toggle();
+                }}
+              >
+                <img width={15} height={15} src={"/close.png"} />
+              </div>
             </div>
-            <div className="nftModal" style={{ overflow: "scroll" }}>
-              {userNFTs.map((row: any, i: number) => (
-                <div className="row" key={i}>
-                  {row.map((nft: any) => (
-                    <>
-                      <div
-                        className="nft"
-                        style={{
-                          position: "relative",
-                          cursor: isLocked(nft.landedTimestamp)
-                            ? "not-allowed"
-                            : "pointer",
-                        }}
-                        onClick={async () => {
-                          if (!isLocked(nft.landedTimestamp)) {
-                            setSelectedNft(nft);
-                            claim(nft);
-                            toggle();
-                          }
-                        }}
-                      >
-                        <img
-                          style={{
-                            position: "relative",
-                            opacity: isLocked(nft.landedTimestamp) ? 0.1 : 1,
-                          }}
-                          width={150}
-                          src={nft.media[0].thumbnail}
-                        />
-                        {isLocked(nft.landedTimestamp) && (
+
+            <h2 className="modalTitle">Select Your Nft</h2>
+
+            {modalMenu == "classic" ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  overflow: "hidden",
+                  width: "100%",
+                }}
+              >
+                <div className="nftModal" style={{ overflow: "scroll" }}>
+                  {userNFTs.map((row: any, i: number) => (
+                    <div className="row" key={i}>
+                      {row.map((nft: any) => (
+                        <>
                           <div
+                            className="nft"
                             style={{
-                              position: "absolute",
-                              top: "25%",
-                              left: "25%",
+                              position: "relative",
+                              cursor: isLocked(nft.landedTimestamp)
+                                ? "not-allowed"
+                                : "pointer",
+                            }}
+                            onClick={async () => {
+                              if (!isLocked(nft.landedTimestamp)) {
+                                claim(nft);
+                                toggle();
+                              }
                             }}
                           >
-                            <Countdown
-                              renderer={renderer}
-                              date={nft.landedTimestamp + 60 * 1000}
+                            <img
+                              style={{
+                                position: "relative",
+                                opacity: isLocked(nft.landedTimestamp)
+                                  ? 0.1
+                                  : 1,
+                              }}
+                              width={150}
+                              src={nft.media[0].thumbnail}
                             />
+                            {isLocked(nft.landedTimestamp) && (
+                              <div
+                                style={{
+                                  position: "absolute",
+                                  top: "25%",
+                                  left: "25%",
+                                }}
+                              >
+                                <Countdown
+                                  renderer={renderer}
+                                  date={nft.landedTimestamp + 60 * 1000}
+                                />
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
-                    </>
+                        </>
+                      ))}
+                    </div>
                   ))}
                 </div>
-              ))}
-            </div>
+                {selectedNft && (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                      backgroundColor: "lightgray",
+                      width: "30%",
+                      marginLeft: "10px",
+                    }}
+                  >
+                    <img
+                      style={{ marginBottom: "10px" }}
+                      width={150}
+                      src={selectedNft.media[0].thumbnail}
+                    />
+                    <a
+                      href={`https://opensea.io/assets/${selectedNft.contract.address}/${selectedNft.tokenId}`}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      style={{ textDecoration: "none" }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <img src={"opensea.svg"} width={20} />
+                        {selectedNft.title}
+                      </div>
+                    </a>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div style={{ display: "flex" }}>
+                {publicGhoulsNFTs.map((nft) => (
+                  <div
+                    className="nft"
+                    style={{
+                      cursor: isLocked(nft.landedTimestamp)
+                        ? "not-allowed"
+                        : "pointer",
+                    }}
+                    onClick={async () => {
+                      try {
+                        await claim(nft);
+                        toggle();
+                      } catch {
+                        alert("You don't own this NFT");
+                      }
+                    }}
+                  >
+                    <img
+                      style={{ padding: "4px" }}
+                      width={150}
+                      height={150}
+                      src={nft.imageUrl}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </Modal>
         )}
         <div className="grid">
@@ -425,7 +525,6 @@ export const App = () => {
                 <>
                   {signature ? (
                     <>
-                      {" "}
                       <span className="address">{trunc(userAddress)}</span>
                       <button
                         className="niceButton"
@@ -437,7 +536,7 @@ export const App = () => {
                   ) : (
                     <>
                       <button className="niceButton" onClick={() => toggle()}>
-                        Sign message
+                        Import your NFTS!
                       </button>
                     </>
                   )}
@@ -457,6 +556,7 @@ export const App = () => {
                     className="tile"
                     onClick={async (event) => {
                       event.preventDefault();
+                      findSelectedNft(col);
                       setSelectedLand([i, j]);
                       toggle();
                     }}
@@ -520,7 +620,7 @@ export const App = () => {
               Import your NFTs !{" "}
             </button>
             <br />
-            <button className="" onClick={() => disconnectWallet()}>
+            <button className="niceButton" onClick={() => disconnectWallet()}>
               Log out
             </button>
           </div>
