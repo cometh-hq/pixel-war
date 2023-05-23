@@ -3,6 +3,8 @@
 PFP Pixel War is a collaborative game where the players use NFTs they own on L1 Ethereum mainnet to use them in L2 (Optimism Rollup) via Storage proofs and MUD.
 It's inspired from r/place by Reddit a 3.5-day experiment with 160 million pixel changes operated by over 10.5 million users,  at an average pace of about 2 million pixels placed per hour.
 
+![Cover](cover.png)
+
 ## This project was build for ETHGLobal Autonomous wordl Hackathon
 
 [ETHGLobal Autonomous wordl Hackathon Event](https://ethglobal.com/events/autonomous)
