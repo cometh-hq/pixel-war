@@ -476,7 +476,7 @@ export const App = () => {
                       src={selectedNft.media[0].thumbnail}
                     />
                     <a
-                      href={`https://opensea.io/assets/${selectedNft.contract.address}/${selectedNft.tokenId}`}
+                      href={`https://opensea.io/assets/ethereum/${selectedNft.contract.address}/${selectedNft.tokenId}`}
                       rel="noopener noreferrer"
                       target="_blank"
                       style={{ textDecoration: "none", color: "black" }}
