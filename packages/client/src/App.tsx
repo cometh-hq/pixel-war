@@ -76,7 +76,7 @@ export const App = () => {
       }
       getMudSignerAddress();
       setUserAddress(wallet?.accounts[0].address);
-      loadPlayerNft("0x4D33B9C8A02EC9a892C98aA9561A3e743dF1FEA3");
+      loadPlayerNft(wallet?.accounts[0].address);
     }
   }, [wallet]);
 
@@ -87,9 +87,7 @@ export const App = () => {
 
   let interval: any = undefined;
   const alchemy = new Alchemy(settings);
-  const [userAddress, setUserAddress] = useState(
-    "0x4D33B9C8A02EC9a892C98aA9561A3e743dF1FEA3"
-  );
+  const [userAddress, setUserAddress] = useState("");
   const [signer, setSigner] = useState<ethers.Signer | null>(null);
   const [signature, setSignature] = useState<string | undefined>(undefined);
   const [mudAddress, setMudAddress] = useState<string>("");
