@@ -76,7 +76,7 @@ export const App = () => {
       }
       getMudSignerAddress();
       setUserAddress(wallet?.accounts[0].address);
-      loadPlayerNft("jdetychey.eth");
+      loadPlayerNft(wallet?.accounts[0].address);
     }
   }, [wallet]);
 
