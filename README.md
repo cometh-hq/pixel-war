@@ -5,7 +5,7 @@ It's inspired from r/place by Reddit a 3.5-day experiment with 160 million pixel
 
 ![Cover](cover.png)
 
-## Key Takaways
+## Key Takeaways
 * [Live demo](https://tranquil-malasada-165ce6.netlify.app/)
 * [PFP WAR - ETH GLobal Official page](https://ethglobal.com/showcase/pfp-war-hccpt)
 * [Medium Article About PFP WAR Storage Proof](https://medium.com/@vincentlg/pfp-war-project-use-the-l1-state-on-optimism-l2-with-storage-proof-fc0124db7caf)
@@ -29,7 +29,9 @@ It's inspired from r/place by Reddit a 3.5-day experiment with 160 million pixel
 
 
 ## Storage Proof
+
 **Objective**
+
 Prove on a Layer 2 that Bob owns a NFT on Layer 1.
 
 You can have a look to the [Pixel Wars Contracts README](https://github.com/cometh-game/pixel-war/blob/master/packages/contracts/README.md)
