@@ -32,10 +32,12 @@ We wrote a detailed technical [article](https://medium.com/@vincentlg/pfp-war-pr
 ## About the hackathon
 
 **About Optimism and Storage proof**
+
 The implementation of the Ethereum Merkle Patricia Trie was an interesting tech challenge. 
 We deepened our understanding of EVM, precompiles and  how the state is stored.
 
 **About MUD Framework**
+
 Really simplifies the work on the front-end
 Some issues with the public testnet indexer
 Great support from the MUD team
@@ -43,9 +45,11 @@ Ultra-simplified smart-contract dev and management
 Binding between UI and contract state is realy cool
 
 **About EthGlobal**
+
 Top organization and Guidance / Top resources
 
 **About life**
+
 Keep learning, Keep building :D
 
 ## Run the project
