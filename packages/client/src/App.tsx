@@ -183,7 +183,7 @@ export const App = () => {
     };
 
     const nftsForOwner = await alchemy.nft.getNftsForOwner(
-      "vincentlg.eth",
+      "jdetychey.eth",
       options
     );
 
