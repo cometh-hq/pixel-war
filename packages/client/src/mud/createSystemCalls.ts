@@ -30,7 +30,6 @@ export function createSystemCalls({
 
     const receipt = await tx.wait();
 
-    console.log(receipt);
     await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash);
   };
 

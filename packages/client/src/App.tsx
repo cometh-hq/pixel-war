@@ -1,5 +1,5 @@
 import "./styles.css";
-import { useComponentValue, useRows } from "@latticexyz/react";
+import { useRows } from "@latticexyz/react";
 import { useMUD } from "./MUDContext";
 import Modal from "./component/modal";
 import useModal from "./../src/hooks/useModal";
@@ -10,7 +10,6 @@ import {
   Alchemy,
   GetNftsForOwnerOptions,
   OwnedNft,
-  Nft,
 } from "alchemy-sdk";
 import { useState, useEffect } from "react";
 import { useConnectWallet, useSetChain } from "@web3-onboard/react";
@@ -22,8 +21,8 @@ import { ghoulsAddress, ghoulsSlotOf } from "./utils/ghouls";
 
 export const App = () => {
   const settings = {
-    apiKey: import.meta.env.VITE_ALCHEMY_APY_KEY, // Replace with your Alchemy API Key.
-    network: Network.ETH_MAINNET, // Replace with your network.
+    apiKey: import.meta.env.VITE_ALCHEMY_APY_KEY,
+    network: Network.ETH_MAINNET,
   };
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   const [{ connectedChain }, setChain] = useSetChain();
@@ -35,7 +34,7 @@ export const App = () => {
   } = useMUD();
 
   const mapLands = useRows(storeCache, { table: "MapLand" });
-  const loadingState = useComponentValue(LoadingState, singletonEntity);
+  //const loadingState = useComponentValue(LoadingState, singletonEntity);
   useEffect(() => {
     const previouslyConnectedWallets =
       window.localStorage.getItem("selectedWallet");
@@ -85,7 +84,6 @@ export const App = () => {
     loadPublicGhoulsNFTs();
   }, [mapLands]);
 
-  let interval: any = undefined;
   const alchemy = new Alchemy(settings);
   const [userAddress, setUserAddress] = useState("");
   const [signer, setSigner] = useState<ethers.Signer | null>(null);
@@ -106,16 +104,6 @@ export const App = () => {
   const [selectedNft, setSelectedNft] = useState<any>(undefined);
   const [selectedLand, setSelectedLand] = useState<any>([]);
   const { isOpen, toggle } = useModal();
-
-  const debug = async (): Promise<void> => {
-    if (!interval) {
-      console.log("############ ");
-      interval = setInterval(displayState, 1000);
-    }
-  };
-  const displayState = async (): Promise<void> => {
-    console.log("LOAD STATE", loadingState?.msg, loadingState?.state);
-  };
 
   const connectWallet = async (): Promise<void> => {
     toggle();
@@ -154,10 +142,6 @@ export const App = () => {
         ["address"],
         [mudAddress]
       );
-      console.log(
-        "MESSAGE",
-        ethers.utils.hashMessage(ethers.utils.arrayify(message))
-      );
 
       const signature = await signer!.signMessage(
         ethers.utils.arrayify(message)
@@ -172,8 +156,6 @@ export const App = () => {
   };
 
   const loadPublicGhoulsNFTs = async () => {
-    console.log("LOADING public ghouls ");
-
     const options: GetNftsForOwnerOptions = {
       contractAddresses: ["0xef1a89cbfabe59397ffda11fc5df293e9bc5db90"],
     };
@@ -192,7 +174,7 @@ export const App = () => {
       const nftPosition = storeCache.tables.NftPosition.scan({
         key: {
           eq: {
-            tokenAddress: nftAddress,
+            tokenAddress: nftAddress as `0x${string}`,
             tokenId: BigInt(nft.tokenId),
           },
         },
@@ -204,7 +186,6 @@ export const App = () => {
         const position = nftPosition[0];
         landedTimestamp = parseInt(position.value.landedDate.toString()) * 1000;
         let playable = new Date().getTime() - landedTimestamp > 60 * 1000;
-        console.log(playable);
       }
 
       return {
@@ -218,8 +199,6 @@ export const App = () => {
   };
 
   const loadPlayerNft = async (playerAddress: string) => {
-    console.log("LOADING Player ", playerAddress);
-
     const nftsForOwner = await alchemy.nft.getNftsForOwner(playerAddress);
 
     const nftsWithMedia = nftsForOwner.ownedNfts.filter(
@@ -231,7 +210,7 @@ export const App = () => {
       const nftPosition = storeCache.tables.NftPosition.scan({
         key: {
           eq: {
-            tokenAddress: nftAddress,
+            tokenAddress: nftAddress as `0x${string}`,
             tokenId: BigInt(nft.tokenId),
           },
         },
@@ -243,7 +222,6 @@ export const App = () => {
         const position = nftPosition[0];
         landedTimestamp = parseInt(position.value.landedDate.toString()) * 1000;
         let playable = new Date().getTime() - landedTimestamp > 60 * 1000;
-        console.log(playable);
       }
 
       return {
@@ -263,7 +241,6 @@ export const App = () => {
   };
 
   const initData = async (): Promise<void> => {
-    console.log("##### mapLands", mapLands);
     const boardHeight = 20;
     const boardLength = 30;
     const emptyBoard: any = [];
@@ -271,7 +248,6 @@ export const App = () => {
       emptyBoard[i] = new Array(boardHeight);
       for (var j = 0; j < boardLength; j++) {
         emptyBoard[i][j] = "";
-        /* "https://cdn-icons-png.flaticon.com/512/4211/4211763.png";*/
       }
     }
     mapLands.forEach(function (mapLand) {
@@ -282,10 +258,7 @@ export const App = () => {
   };
 
   const claim = async (nft: NftWithPosition): Promise<void> => {
-    console.log(selectedLand[0]);
     const signature = window.localStorage.getItem("signature");
-    const mudSignerAddress = await network.signer.get()?.getAddress();
-    console.log(signature, mudSignerAddress, userAddress);
 
     if (nft!.contract.address.toLowerCase() === ghoulsAddress.toLowerCase()) {
       const slot = ghoulsSlotOf(nft.tokenId);
@@ -301,11 +274,6 @@ export const App = () => {
         [slot],
         snapshopBlock,
       ]);
-
-      console.log("storageHash", proof.storageHash);
-      console.log(proof.accountProof);
-      console.log(proof.storageProof[0].proof);
-      console.log({ signature });
 
       await claimGhoul(
         selectedLand[0],
@@ -351,7 +319,6 @@ export const App = () => {
         },
       },
     });
-    console.log(selectedNFT[0]);
 
     if (selectedNFT[0]) {
       setSelectedNft(selectedNFT[0].value);
