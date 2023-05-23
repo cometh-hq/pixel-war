@@ -43,9 +43,10 @@ MUD ([MUD client](https://github.com/cometh-game/pixel-war/tree/master/packages/
 
 ### A op-geth precompile of this verifier: 
 
-GO ([this repo](https://github.com/Kelvyne/op-geth/))**
+GO ([this repo](https://github.com/Kelvyne/op-geth/))
 
 The verification of MPT is not available on EVM so we decided to make a precompile to simplify the verification of such trie on smartcontract.
+The cost to call our precompile MPT verifier is 30K gas.
 
 You can have a look to [the commit of our modification on op-get](https://github.com/Kelvyne/op-geth/commit/d1f21853b1e4548370c8bff9c9645415515b205d)
 
@@ -53,14 +54,14 @@ You can have a look to [the commit of our modification on op-get](https://github
 **core/vm/contracts.go**
 
 We added a precompile to verify the MPT at address 0x92
-```
+```go
 common.BytesToAddress([]byte{0x92}): &mptVerify{},
 
 ```
 
 We need to format our data to make it compatible with the native Geth Method
 
-```
+```go
 func (c *mptVerify) Run(input []byte) ([]byte, error) {
   // [root <32 bytes>, key <32 bytes>, proof <32 bytes length><n bytes arrays prefixed with length>]
 
