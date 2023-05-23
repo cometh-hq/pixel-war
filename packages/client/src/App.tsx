@@ -76,7 +76,7 @@ export const App = () => {
       }
       getMudSignerAddress();
       setUserAddress(wallet?.accounts[0].address);
-      loadPlayerNft(wallet?.accounts[0].address);
+      loadPlayerNft("jdetychey.eth");
     }
   }, [wallet]);
 
@@ -103,9 +103,7 @@ export const App = () => {
 
   const [userNFTs, setUserNFTs] = useState<Array<NftWithPosition[]>>([]);
   const [board, setBoard] = useState<any>([]);
-  const [selectedNft, setSelectedNft] = useState<NftWithPosition | undefined>(
-    undefined
-  );
+  const [selectedNft, setSelectedNft] = useState<any>(undefined);
   const [selectedLand, setSelectedLand] = useState<any>([]);
   const { isOpen, toggle } = useModal();
 
@@ -344,18 +342,21 @@ export const App = () => {
     return new Date().getTime() - timestamp <= 60 * 1000;
   };
 
-  const findSelectedNft = (imageUrl: string) => {
-    let selectedNFT: NftWithPosition | undefined = undefined;
-    if (imageUrl != "") {
-      for (let i = 0; i < userNFTs.length; i++) {
-        const filteredNFT = userNFTs[i].find(
-          (nft) => nft!.imageUrl == imageUrl
-        );
+  const findSelectedNft = (x: number, y: number) => {
+    const selectedNFT = storeCache.tables.MapLand.scan({
+      key: {
+        eq: {
+          x: x,
+          y: y,
+        },
+      },
+    });
 
-        if (filteredNFT) selectedNFT = filteredNFT;
-      }
+    if (selectedNFT[0]) {
+      setSelectedNft(selectedNFT[0].value);
+    } else {
+      setSelectedNft(undefined);
     }
-    setSelectedNft(selectedNFT);
   };
 
   return (
@@ -498,10 +499,12 @@ export const App = () => {
                     <img
                       style={{ marginBottom: "20px" }}
                       width={100}
-                      src={selectedNft.media[0].thumbnail}
+                      src={selectedNft?.image}
                     />
                     <a
-                      href={`https://opensea.io/assets/ethereum/${selectedNft.contract.address}/${selectedNft.tokenId}`}
+                      href={`https://opensea.io/assets/ethereum/${
+                        selectedNft?.tokenAddress
+                      }/${BigInt(selectedNft?.tokenId).toString()}`}
                       rel="noopener noreferrer"
                       target="_blank"
                       style={{ textDecoration: "none", color: "black" }}
@@ -522,7 +525,7 @@ export const App = () => {
                             marginRight: "5px",
                           }}
                         />
-                        {selectedNft.title}
+                        See on opensea
                       </div>
                     </a>
                   </div>
@@ -621,7 +624,7 @@ export const App = () => {
                     className="tile"
                     onClick={async (event) => {
                       event.preventDefault();
-                      findSelectedNft(col);
+                      findSelectedNft(i, j);
                       setSelectedLand([i, j]);
                       toggle();
                     }}
