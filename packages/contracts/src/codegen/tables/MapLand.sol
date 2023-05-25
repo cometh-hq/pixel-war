@@ -39,8 +39,8 @@ library MapLand {
 
   function getKeySchema() internal pure returns (Schema) {
     SchemaType[] memory _schema = new SchemaType[](2);
-    _schema[0] = SchemaType.UINT256;
-    _schema[1] = SchemaType.UINT256;
+    _schema[0] = SchemaType.UINT32;
+    _schema[1] = SchemaType.UINT32;
 
     return SchemaLib.encode(_schema);
   }
@@ -77,7 +77,7 @@ library MapLand {
   }
 
   /** Get tokenAddress */
-  function getTokenAddress(uint256 x, uint256 y) internal view returns (address tokenAddress) {
+  function getTokenAddress(uint32 x, uint32 y) internal view returns (address tokenAddress) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -87,7 +87,7 @@ library MapLand {
   }
 
   /** Get tokenAddress (using the specified store) */
-  function getTokenAddress(IStore _store, uint256 x, uint256 y) internal view returns (address tokenAddress) {
+  function getTokenAddress(IStore _store, uint32 x, uint32 y) internal view returns (address tokenAddress) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -97,7 +97,7 @@ library MapLand {
   }
 
   /** Set tokenAddress */
-  function setTokenAddress(uint256 x, uint256 y, address tokenAddress) internal {
+  function setTokenAddress(uint32 x, uint32 y, address tokenAddress) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -106,7 +106,7 @@ library MapLand {
   }
 
   /** Set tokenAddress (using the specified store) */
-  function setTokenAddress(IStore _store, uint256 x, uint256 y, address tokenAddress) internal {
+  function setTokenAddress(IStore _store, uint32 x, uint32 y, address tokenAddress) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -115,7 +115,7 @@ library MapLand {
   }
 
   /** Get tokenId */
-  function getTokenId(uint256 x, uint256 y) internal view returns (uint256 tokenId) {
+  function getTokenId(uint32 x, uint32 y) internal view returns (uint256 tokenId) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -125,7 +125,7 @@ library MapLand {
   }
 
   /** Get tokenId (using the specified store) */
-  function getTokenId(IStore _store, uint256 x, uint256 y) internal view returns (uint256 tokenId) {
+  function getTokenId(IStore _store, uint32 x, uint32 y) internal view returns (uint256 tokenId) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -135,7 +135,7 @@ library MapLand {
   }
 
   /** Set tokenId */
-  function setTokenId(uint256 x, uint256 y, uint256 tokenId) internal {
+  function setTokenId(uint32 x, uint32 y, uint256 tokenId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -144,7 +144,7 @@ library MapLand {
   }
 
   /** Set tokenId (using the specified store) */
-  function setTokenId(IStore _store, uint256 x, uint256 y, uint256 tokenId) internal {
+  function setTokenId(IStore _store, uint32 x, uint32 y, uint256 tokenId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -153,7 +153,7 @@ library MapLand {
   }
 
   /** Get image */
-  function getImage(uint256 x, uint256 y) internal view returns (string memory image) {
+  function getImage(uint32 x, uint32 y) internal view returns (string memory image) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -163,7 +163,7 @@ library MapLand {
   }
 
   /** Get image (using the specified store) */
-  function getImage(IStore _store, uint256 x, uint256 y) internal view returns (string memory image) {
+  function getImage(IStore _store, uint32 x, uint32 y) internal view returns (string memory image) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -173,7 +173,7 @@ library MapLand {
   }
 
   /** Set image */
-  function setImage(uint256 x, uint256 y, string memory image) internal {
+  function setImage(uint32 x, uint32 y, string memory image) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -182,7 +182,7 @@ library MapLand {
   }
 
   /** Set image (using the specified store) */
-  function setImage(IStore _store, uint256 x, uint256 y, string memory image) internal {
+  function setImage(IStore _store, uint32 x, uint32 y, string memory image) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -191,7 +191,7 @@ library MapLand {
   }
 
   /** Get the length of image */
-  function lengthImage(uint256 x, uint256 y) internal view returns (uint256) {
+  function lengthImage(uint32 x, uint32 y) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -201,7 +201,7 @@ library MapLand {
   }
 
   /** Get the length of image (using the specified store) */
-  function lengthImage(IStore _store, uint256 x, uint256 y) internal view returns (uint256) {
+  function lengthImage(IStore _store, uint32 x, uint32 y) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -211,7 +211,7 @@ library MapLand {
   }
 
   /** Get an item of image (unchecked, returns invalid data if index overflows) */
-  function getItemImage(uint256 x, uint256 y, uint256 _index) internal view returns (string memory) {
+  function getItemImage(uint32 x, uint32 y, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -221,7 +221,7 @@ library MapLand {
   }
 
   /** Get an item of image (using the specified store) (unchecked, returns invalid data if index overflows) */
-  function getItemImage(IStore _store, uint256 x, uint256 y, uint256 _index) internal view returns (string memory) {
+  function getItemImage(IStore _store, uint32 x, uint32 y, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -231,7 +231,7 @@ library MapLand {
   }
 
   /** Push a slice to image */
-  function pushImage(uint256 x, uint256 y, string memory _slice) internal {
+  function pushImage(uint32 x, uint32 y, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -240,7 +240,7 @@ library MapLand {
   }
 
   /** Push a slice to image (using the specified store) */
-  function pushImage(IStore _store, uint256 x, uint256 y, string memory _slice) internal {
+  function pushImage(IStore _store, uint32 x, uint32 y, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -249,7 +249,7 @@ library MapLand {
   }
 
   /** Pop a slice from image */
-  function popImage(uint256 x, uint256 y) internal {
+  function popImage(uint32 x, uint32 y) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -258,7 +258,7 @@ library MapLand {
   }
 
   /** Pop a slice from image (using the specified store) */
-  function popImage(IStore _store, uint256 x, uint256 y) internal {
+  function popImage(IStore _store, uint32 x, uint32 y) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -267,7 +267,7 @@ library MapLand {
   }
 
   /** Update a slice of image at `_index` */
-  function updateImage(uint256 x, uint256 y, uint256 _index, string memory _slice) internal {
+  function updateImage(uint32 x, uint32 y, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -276,7 +276,7 @@ library MapLand {
   }
 
   /** Update a slice of image (using the specified store) at `_index` */
-  function updateImage(IStore _store, uint256 x, uint256 y, uint256 _index, string memory _slice) internal {
+  function updateImage(IStore _store, uint32 x, uint32 y, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -285,7 +285,7 @@ library MapLand {
   }
 
   /** Get the full data */
-  function get(uint256 x, uint256 y) internal view returns (MapLandData memory _table) {
+  function get(uint32 x, uint32 y) internal view returns (MapLandData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -295,7 +295,7 @@ library MapLand {
   }
 
   /** Get the full data (using the specified store) */
-  function get(IStore _store, uint256 x, uint256 y) internal view returns (MapLandData memory _table) {
+  function get(IStore _store, uint32 x, uint32 y) internal view returns (MapLandData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -305,7 +305,7 @@ library MapLand {
   }
 
   /** Set the full data using individual values */
-  function set(uint256 x, uint256 y, address tokenAddress, uint256 tokenId, string memory image) internal {
+  function set(uint32 x, uint32 y, address tokenAddress, uint256 tokenId, string memory image) internal {
     bytes memory _data = encode(tokenAddress, tokenId, image);
 
     bytes32[] memory _keyTuple = new bytes32[](2);
@@ -316,14 +316,7 @@ library MapLand {
   }
 
   /** Set the full data using individual values (using the specified store) */
-  function set(
-    IStore _store,
-    uint256 x,
-    uint256 y,
-    address tokenAddress,
-    uint256 tokenId,
-    string memory image
-  ) internal {
+  function set(IStore _store, uint32 x, uint32 y, address tokenAddress, uint256 tokenId, string memory image) internal {
     bytes memory _data = encode(tokenAddress, tokenId, image);
 
     bytes32[] memory _keyTuple = new bytes32[](2);
@@ -334,12 +327,12 @@ library MapLand {
   }
 
   /** Set the full data using the data struct */
-  function set(uint256 x, uint256 y, MapLandData memory _table) internal {
+  function set(uint32 x, uint32 y, MapLandData memory _table) internal {
     set(x, y, _table.tokenAddress, _table.tokenId, _table.image);
   }
 
   /** Set the full data using the data struct (using the specified store) */
-  function set(IStore _store, uint256 x, uint256 y, MapLandData memory _table) internal {
+  function set(IStore _store, uint32 x, uint32 y, MapLandData memory _table) internal {
     set(_store, x, y, _table.tokenAddress, _table.tokenId, _table.image);
   }
 
@@ -374,14 +367,14 @@ library MapLand {
   }
 
   /** Encode keys as a bytes32 array using this table's schema */
-  function encodeKeyTuple(uint256 x, uint256 y) internal pure returns (bytes32[] memory _keyTuple) {
+  function encodeKeyTuple(uint32 x, uint32 y) internal pure returns (bytes32[] memory _keyTuple) {
     _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
   }
 
   /* Delete all data for given keys */
-  function deleteRecord(uint256 x, uint256 y) internal {
+  function deleteRecord(uint32 x, uint32 y) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));
@@ -390,7 +383,7 @@ library MapLand {
   }
 
   /* Delete all data for given keys (using the specified store) */
-  function deleteRecord(IStore _store, uint256 x, uint256 y) internal {
+  function deleteRecord(IStore _store, uint32 x, uint32 y) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256((x)));
     _keyTuple[1] = bytes32(uint256((y)));

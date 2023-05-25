@@ -4,8 +4,8 @@ export default mudConfig({
   tables: {
     MapLand: {
       keySchema: {
-        x: "uint256",
-        y: "uint256",
+        x: "uint32",
+        y: "uint32",
       },
       schema: {
         tokenAddress: "address",
