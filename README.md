@@ -57,7 +57,7 @@ GO ([this repo](https://github.com/Kelvyne/op-geth/))
 The verification of MPT is not available on EVM so we decided to make a precompile to simplify the verification of such trie on smartcontract.
 The cost to call our precompile MPT verifier is 30K gas.
 
-You can have a look to [the commit of our modification on op-get](https://github.com/Kelvyne/op-geth/commit/d1f21853b1e4548370c8bff9c9645415515b205d)
+You can have a look to [the commit of our modification on op-geth](https://github.com/Kelvyne/op-geth/commit/d1f21853b1e4548370c8bff9c9645415515b205d)
 
 
 **core/vm/contracts.go**
