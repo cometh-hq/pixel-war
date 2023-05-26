@@ -251,7 +251,14 @@ export const App = () => {
       }
     }
     mapLands.forEach(function (mapLand) {
-      emptyBoard[mapLand.key.x][mapLand.key.y] = mapLand.value.image;
+      const keys = ethers.utils.parseBytes32String(mapLand.key.value);
+      console.log(keys);
+      const coordinates = keys.split("-");
+      const x = parseInt(coordinates[0]);
+      const y = parseInt(coordinates[1]);
+      console.log(x, y);
+
+      emptyBoard[x][y] = mapLand.value.image;
     });
 
     setBoard(emptyBoard);
@@ -259,6 +266,12 @@ export const App = () => {
 
   const claim = async (nft: NftWithPosition): Promise<void> => {
     const signature = window.localStorage.getItem("signature");
+
+    const mapKey = selectedLand[0] + "-" + selectedLand[1];
+    console.log(mapKey);
+    const key = ethers.utils.formatBytes32String(mapKey);
+
+    console.log(key);
 
     if (nft!.contract.address.toLowerCase() === ghoulsAddress.toLowerCase()) {
       const slot = ghoulsSlotOf(nft.tokenId);
@@ -276,6 +289,7 @@ export const App = () => {
       ]);
 
       await claimGhoul(
+        key,
         selectedLand[0],
         selectedLand[1],
         nft.tokenId,
@@ -287,6 +301,7 @@ export const App = () => {
       );
     } else {
       await claimLand(
+        key,
         selectedLand[0],
         selectedLand[1],
         nft!.contract.address,

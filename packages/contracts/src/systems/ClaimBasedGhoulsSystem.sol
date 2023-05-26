@@ -11,19 +11,22 @@ contract ClaimBasedGhoulsSystem is System, StorageVerifier {
   using ECDSA for bytes32;
   using ECDSA for bytes;
 
-  function _setPosition(uint32 x, uint32 y, address tokenAddress, uint256 tokenId, string memory image) private {
+   bytes32  stateRoot = 0x46ef9d82ce11c07fd77ff6db917ebb25f17f0b6819a7d702d9079ceb2f9ef8ea;
+   address tokenAddress = 0xeF1a89cbfAbE59397FfdA11Fc5DF293E9bC5Db90;
+
+
+  function _setPosition(bytes32 key, uint32 x, uint32 y, address tokenAddress, uint256 tokenId, string memory image) private {
     NftPositionData memory playedNftPosition = NftPosition.get(tokenAddress, tokenId);
 
     uint256 timeDiff = block.timestamp - playedNftPosition.landedDate;
     require(timeDiff >= 60, "Nft claimed less than one minute ago");
 
-
-    MapLandData memory mapLand = MapLand.get(x, y);
-    MapLand.set(x, y, MapLandData({tokenAddress: tokenAddress, tokenId: tokenId, image:image }));
+    MapLand.set(key, MapLandData({tokenAddress: tokenAddress, tokenId: tokenId, image:image }));
     NftPosition.set(tokenAddress, tokenId,  NftPositionData({x: x, y:y, landedDate: block.timestamp}));
   }
 
   function claimGhoul(
+    bytes32 key,
     uint32 x, uint32 y,
     uint256 tokenId,
     string memory image,
@@ -37,9 +40,7 @@ contract ClaimBasedGhoulsSystem is System, StorageVerifier {
 
     // Since this contract is not deployed on a network that settles on mainnet, 
     // We hardcode the root and bypass the block hash check
-    bytes32 stateRoot = 0x46ef9d82ce11c07fd77ff6db917ebb25f17f0b6819a7d702d9079ceb2f9ef8ea;
-    address tokenAddress = 0xeF1a89cbfAbE59397FfdA11Fc5DF293E9bC5Db90;
-
+   
     // Expectation: the provided proof is dedicated for the Ghoul
     MPT.Account memory basedGhouls = MPT.Account({
       accountAddress: tokenAddress,
@@ -57,6 +58,6 @@ contract ClaimBasedGhoulsSystem is System, StorageVerifier {
 
     // Then verify the proof
     _verifyStorage(stateRoot, basedGhouls, slot, stateProof, storageProof);
-    _setPosition(x, y, tokenAddress, tokenId, image);
+    _setPosition(key, x, y, tokenAddress, tokenId, image);
   }
 }

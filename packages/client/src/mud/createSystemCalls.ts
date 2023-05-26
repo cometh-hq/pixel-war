@@ -8,6 +8,7 @@ export function createSystemCalls({
   txReduced$,
 }: SetupNetworkResult) {
   const claimGhoul = async (
+    key: string,
     x: number,
     y: number,
     tokenId: string,
@@ -18,6 +19,7 @@ export function createSystemCalls({
     storageProof: string[]
   ) => {
     const tx = await worldSend("claimGhoul", [
+      key,
       x,
       y,
       tokenId,
@@ -34,13 +36,21 @@ export function createSystemCalls({
   };
 
   const claimLand = async (
+    key: string,
     x: number,
     y: number,
     tokenAddress: string,
     tokenId: string,
     image: string
   ) => {
-    const tx = await worldSend("claim", [x, y, tokenAddress, tokenId, image]);
+    const tx = await worldSend("claim", [
+      key,
+      x,
+      y,
+      tokenAddress,
+      tokenId,
+      image,
+    ]);
     await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash);
   };
 

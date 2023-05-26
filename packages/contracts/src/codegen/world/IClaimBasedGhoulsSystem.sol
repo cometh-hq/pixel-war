@@ -5,6 +5,7 @@ pragma solidity >=0.8.0;
 
 interface IClaimBasedGhoulsSystem {
   function claimGhoul(
+    bytes32 key,
     uint32 x,
     uint32 y,
     uint256 tokenId,

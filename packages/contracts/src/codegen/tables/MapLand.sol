@@ -38,9 +38,8 @@ library MapLand {
   }
 
   function getKeySchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](2);
-    _schema[0] = SchemaType.UINT32;
-    _schema[1] = SchemaType.UINT32;
+    SchemaType[] memory _schema = new SchemaType[](1);
+    _schema[0] = SchemaType.BYTES32;
 
     return SchemaLib.encode(_schema);
   }
@@ -77,263 +76,237 @@ library MapLand {
   }
 
   /** Get tokenAddress */
-  function getTokenAddress(uint32 x, uint32 y) internal view returns (address tokenAddress) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function getTokenAddress(bytes32 value) internal view returns (address tokenAddress) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
     return (address(Bytes.slice20(_blob, 0)));
   }
 
   /** Get tokenAddress (using the specified store) */
-  function getTokenAddress(IStore _store, uint32 x, uint32 y) internal view returns (address tokenAddress) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function getTokenAddress(IStore _store, bytes32 value) internal view returns (address tokenAddress) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
     return (address(Bytes.slice20(_blob, 0)));
   }
 
   /** Set tokenAddress */
-  function setTokenAddress(uint32 x, uint32 y, address tokenAddress) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function setTokenAddress(bytes32 value, address tokenAddress) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked((tokenAddress)));
   }
 
   /** Set tokenAddress (using the specified store) */
-  function setTokenAddress(IStore _store, uint32 x, uint32 y, address tokenAddress) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function setTokenAddress(IStore _store, bytes32 value, address tokenAddress) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     _store.setField(_tableId, _keyTuple, 0, abi.encodePacked((tokenAddress)));
   }
 
   /** Get tokenId */
-  function getTokenId(uint32 x, uint32 y) internal view returns (uint256 tokenId) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function getTokenId(bytes32 value) internal view returns (uint256 tokenId) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 1);
     return (uint256(Bytes.slice32(_blob, 0)));
   }
 
   /** Get tokenId (using the specified store) */
-  function getTokenId(IStore _store, uint32 x, uint32 y) internal view returns (uint256 tokenId) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function getTokenId(IStore _store, bytes32 value) internal view returns (uint256 tokenId) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 1);
     return (uint256(Bytes.slice32(_blob, 0)));
   }
 
   /** Set tokenId */
-  function setTokenId(uint32 x, uint32 y, uint256 tokenId) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function setTokenId(bytes32 value, uint256 tokenId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     StoreSwitch.setField(_tableId, _keyTuple, 1, abi.encodePacked((tokenId)));
   }
 
   /** Set tokenId (using the specified store) */
-  function setTokenId(IStore _store, uint32 x, uint32 y, uint256 tokenId) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function setTokenId(IStore _store, bytes32 value, uint256 tokenId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     _store.setField(_tableId, _keyTuple, 1, abi.encodePacked((tokenId)));
   }
 
   /** Get image */
-  function getImage(uint32 x, uint32 y) internal view returns (string memory image) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function getImage(bytes32 value) internal view returns (string memory image) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 2);
     return (string(_blob));
   }
 
   /** Get image (using the specified store) */
-  function getImage(IStore _store, uint32 x, uint32 y) internal view returns (string memory image) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function getImage(IStore _store, bytes32 value) internal view returns (string memory image) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 2);
     return (string(_blob));
   }
 
   /** Set image */
-  function setImage(uint32 x, uint32 y, string memory image) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function setImage(bytes32 value, string memory image) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     StoreSwitch.setField(_tableId, _keyTuple, 2, bytes((image)));
   }
 
   /** Set image (using the specified store) */
-  function setImage(IStore _store, uint32 x, uint32 y, string memory image) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function setImage(IStore _store, bytes32 value, string memory image) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     _store.setField(_tableId, _keyTuple, 2, bytes((image)));
   }
 
   /** Get the length of image */
-  function lengthImage(uint32 x, uint32 y) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function lengthImage(bytes32 value) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     uint256 _byteLength = StoreSwitch.getFieldLength(_tableId, _keyTuple, 2, getSchema());
     return _byteLength / 1;
   }
 
   /** Get the length of image (using the specified store) */
-  function lengthImage(IStore _store, uint32 x, uint32 y) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function lengthImage(IStore _store, bytes32 value) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     uint256 _byteLength = _store.getFieldLength(_tableId, _keyTuple, 2, getSchema());
     return _byteLength / 1;
   }
 
   /** Get an item of image (unchecked, returns invalid data if index overflows) */
-  function getItemImage(uint32 x, uint32 y, uint256 _index) internal view returns (string memory) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function getItemImage(bytes32 value, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     bytes memory _blob = StoreSwitch.getFieldSlice(_tableId, _keyTuple, 2, getSchema(), _index * 1, (_index + 1) * 1);
     return (string(_blob));
   }
 
   /** Get an item of image (using the specified store) (unchecked, returns invalid data if index overflows) */
-  function getItemImage(IStore _store, uint32 x, uint32 y, uint256 _index) internal view returns (string memory) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function getItemImage(IStore _store, bytes32 value, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     bytes memory _blob = _store.getFieldSlice(_tableId, _keyTuple, 2, getSchema(), _index * 1, (_index + 1) * 1);
     return (string(_blob));
   }
 
   /** Push a slice to image */
-  function pushImage(uint32 x, uint32 y, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function pushImage(bytes32 value, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     StoreSwitch.pushToField(_tableId, _keyTuple, 2, bytes((_slice)));
   }
 
   /** Push a slice to image (using the specified store) */
-  function pushImage(IStore _store, uint32 x, uint32 y, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function pushImage(IStore _store, bytes32 value, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     _store.pushToField(_tableId, _keyTuple, 2, bytes((_slice)));
   }
 
   /** Pop a slice from image */
-  function popImage(uint32 x, uint32 y) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function popImage(bytes32 value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     StoreSwitch.popFromField(_tableId, _keyTuple, 2, 1);
   }
 
   /** Pop a slice from image (using the specified store) */
-  function popImage(IStore _store, uint32 x, uint32 y) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function popImage(IStore _store, bytes32 value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     _store.popFromField(_tableId, _keyTuple, 2, 1);
   }
 
   /** Update a slice of image at `_index` */
-  function updateImage(uint32 x, uint32 y, uint256 _index, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function updateImage(bytes32 value, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     StoreSwitch.updateInField(_tableId, _keyTuple, 2, _index * 1, bytes((_slice)));
   }
 
   /** Update a slice of image (using the specified store) at `_index` */
-  function updateImage(IStore _store, uint32 x, uint32 y, uint256 _index, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function updateImage(IStore _store, bytes32 value, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     _store.updateInField(_tableId, _keyTuple, 2, _index * 1, bytes((_slice)));
   }
 
   /** Get the full data */
-  function get(uint32 x, uint32 y) internal view returns (MapLandData memory _table) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function get(bytes32 value) internal view returns (MapLandData memory _table) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     bytes memory _blob = StoreSwitch.getRecord(_tableId, _keyTuple, getSchema());
     return decode(_blob);
   }
 
   /** Get the full data (using the specified store) */
-  function get(IStore _store, uint32 x, uint32 y) internal view returns (MapLandData memory _table) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function get(IStore _store, bytes32 value) internal view returns (MapLandData memory _table) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     bytes memory _blob = _store.getRecord(_tableId, _keyTuple, getSchema());
     return decode(_blob);
   }
 
   /** Set the full data using individual values */
-  function set(uint32 x, uint32 y, address tokenAddress, uint256 tokenId, string memory image) internal {
+  function set(bytes32 value, address tokenAddress, uint256 tokenId, string memory image) internal {
     bytes memory _data = encode(tokenAddress, tokenId, image);
 
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     StoreSwitch.setRecord(_tableId, _keyTuple, _data);
   }
 
   /** Set the full data using individual values (using the specified store) */
-  function set(IStore _store, uint32 x, uint32 y, address tokenAddress, uint256 tokenId, string memory image) internal {
+  function set(IStore _store, bytes32 value, address tokenAddress, uint256 tokenId, string memory image) internal {
     bytes memory _data = encode(tokenAddress, tokenId, image);
 
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     _store.setRecord(_tableId, _keyTuple, _data);
   }
 
   /** Set the full data using the data struct */
-  function set(uint32 x, uint32 y, MapLandData memory _table) internal {
-    set(x, y, _table.tokenAddress, _table.tokenId, _table.image);
+  function set(bytes32 value, MapLandData memory _table) internal {
+    set(value, _table.tokenAddress, _table.tokenId, _table.image);
   }
 
   /** Set the full data using the data struct (using the specified store) */
-  function set(IStore _store, uint32 x, uint32 y, MapLandData memory _table) internal {
-    set(_store, x, y, _table.tokenAddress, _table.tokenId, _table.image);
+  function set(IStore _store, bytes32 value, MapLandData memory _table) internal {
+    set(_store, value, _table.tokenAddress, _table.tokenId, _table.image);
   }
 
   /** Decode the tightly packed blob using this table's schema */
@@ -367,26 +340,23 @@ library MapLand {
   }
 
   /** Encode keys as a bytes32 array using this table's schema */
-  function encodeKeyTuple(uint32 x, uint32 y) internal pure returns (bytes32[] memory _keyTuple) {
-    _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function encodeKeyTuple(bytes32 value) internal pure returns (bytes32[] memory _keyTuple) {
+    _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
   }
 
   /* Delete all data for given keys */
-  function deleteRecord(uint32 x, uint32 y) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function deleteRecord(bytes32 value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
 
   /* Delete all data for given keys (using the specified store) */
-  function deleteRecord(IStore _store, uint32 x, uint32 y) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256((x)));
-    _keyTuple[1] = bytes32(uint256((y)));
+  function deleteRecord(IStore _store, bytes32 value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((value));
 
     _store.deleteRecord(_tableId, _keyTuple);
   }
